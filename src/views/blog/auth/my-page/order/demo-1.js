@@ -4,7 +4,7 @@ import { Tabs, Tab, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import { commarNumber, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function';
+import { commarNumber, getOrderStatusText, 손님주문상태, commarNumberWithUnit } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
@@ -12,6 +12,7 @@ import ReviewWriteButton from 'src/components/elements/shop/review/ReviewWriteBu
 import useReviewWritable from 'src/components/elements/shop/review/useReviewWritable';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
+import CancelLineNote from 'src/components/elements/shop/CancelLineNote';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -96,6 +97,9 @@ const Demo1 = (props) => {
                         seller_title: order?.seller_user_name || translate('기본배송'),
                         order_name: formatLang(order, 'product_name') || order?.order_name,
                         order_count: order_count,
+                        // 부분취소·취소요청 표시(CancelLineNote, 2026-11-20)
+                        cancel_count: order?.cancel_count,
+                        requested_count: order?.requested_count,
                         order_amount: order_amount,
                         unit_price: order_count > 0 ? Math.round(order_amount / order_count) : order_amount,
                         option_text: getOptionText(order),
@@ -185,7 +189,7 @@ const Demo1 = (props) => {
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem 0', fontSize: '0.85rem', opacity: 0.8 }}>
                                             <div>{translate('주문번호')} {item.ord_num}</div>
-                                            <div>{translate(getOrderStatusText(item.trx))}</div>
+                                            <div>{손님주문상태(item.trx, translate)}</div>
                                         </div>
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -194,7 +198,7 @@ const Demo1 = (props) => {
                                                 <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                                                     <div>{item.order_name}</div>
                                                     <div>{commarNumberWithUnit(item.unit_price)}</div>
-                                                    <div>{translate('옵션')} : {item.option_text ? `${item.option_text} / ` : ''}{item.order_count}{translate('개')}</div>
+                                                    <div>{translate('옵션')} : {item.option_text ? `${item.option_text} / ` : ''}{item.order_count}{translate('개')}<CancelLineNote line={item} cancelled={item?.trx?.is_cancel_trans == 1} /></div>
                                                     <div style={{ marginTop: '0.5rem' }}>{commarNumberWithUnit(item.order_amount)}</div>
                                                 </div>
                                             </div>

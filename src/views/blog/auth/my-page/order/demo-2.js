@@ -4,7 +4,7 @@ import { Tabs, Tab, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import { commarNumber, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function';
+import { commarNumber, getOrderStatusText, 손님주문상태, commarNumberWithUnit } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
@@ -13,6 +13,7 @@ import useReviewWritable from 'src/components/elements/shop/review/useReviewWrit
 import { isDomestic, formatOverseasAddress } from 'src/data/countries';
 import { formatLang } from 'src/utils/format';
 import { useLocales } from 'src/locales';
+import CancelLineNote from 'src/components/elements/shop/CancelLineNote';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -169,9 +170,9 @@ const Demo2 = (props) => {
                                                     {item.groups?.length > 0 &&
                                                         <div>{translate('옵션')} : {item.groups.map((group) => `${formatLang(group, 'group_name')}: ${(group?.options ?? []).map((option) => getOptionLabel(option)).join(' / ')}`).join(', ')}</div>
                                                     }
-                                                    <div>{translate('수량')} : {item.order_count}{translate('개')}</div>
+                                                    <div>{translate('수량')} : {item.order_count}{translate('개')}<CancelLineNote line={item} cancelled={item?.trx?.is_cancel_trans == 1} /></div>
                                                     <div style={{ marginTop: '0.5rem' }}>{translate('주문번호')} : {item.trx?.ord_num}</div>
-                                                    <div>{translate('주문현황')} : {translate(getOrderStatusText(item.trx))}</div>
+                                                    <div>{translate('주문현황')} : {손님주문상태(item.trx, translate)}</div>
                                                 </div>
                                             </div>
                                             <AddressButton>

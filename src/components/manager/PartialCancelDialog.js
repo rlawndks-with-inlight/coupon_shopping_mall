@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import {
     Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle,
-    Divider, IconButton, Stack, TextField, Typography, Switch, FormControlLabel, Checkbox,
+    Divider, IconButton, Stack, TextField, Typography, Switch, FormControlLabel, Checkbox, Radio, RadioGroup,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import toast from 'react-hot-toast';
 import { apiManager } from 'src/utils/api';
 import { commarNumber } from 'src/utils/function';
 import { getOptionLabel } from 'src/utils/shop-util';
+import { 함께취소할추가상품 } from 'src/utils/cancel-addon';
 
 // 주문 '줄' 단위 취소.
 //
@@ -57,10 +58,20 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
     // 출고 이후(출고완료·배송중·배송완료) 취소 — 관리자가 회수를 확인했다고 눌러야 열린다(가맹점 요청서 2026-09-11 ④-2 → 사장님 결정).
     // 서버(cancel.js)는 이 표시(shipped_confirm) 없이는 출고 후 취소를 거부한다.
     const [회수확인, set회수확인] = useState(false);
+    // 누구 사정인가(2026-11-20, 네이버페이 방식) — 'buyer' 손님 사정 / 'seller' 판매자 사정(품절·배송 불가 등).
+    //   판매자 사정이면 무료배송 기준이 깨져도 배송비를 빼지 않는다. 손님 요청을 처리할 때는 손님 사정으로 미리 고른다.
+    //   손님 요청이 없으면 비워 두고 고르게 한다 — 가맹점이 직접 취소하는 건 대개 품절이라, 손님 사정을 기본으로 두면 손님 환불에서 배송비를 잘못 뺀다.
+    const [사정, set사정] = useState('');
+    // 빼야 할 배송비가 상품값보다 커서 환불액이 0 이하가 될 때만 고른다: 'waive' 배송비 받지 않음 / 'no_refund' 환불 없이 상품만 빼기
+    const [배송처리, set배송처리] = useState(null);
+    // 확인 단계의 금액 — 서버가 실제 취소와 같은 계산으로 낸 값(배송비 차감·포인트 포함)
+    const [미리, set미리] = useState(null);
+    const [미리중, set미리중] = useState(false);
 
     useEffect(() => {
         if (!open || !trxId) return;
         setLoading(true); setQty({}); setReason(''); setIdemKey(새키()); set확인단계(false); set직접조정(false); set회수확인(false);
+        set사정(''); set배송처리(null); set미리(null);
         (async () => {
             const r = await apiManager(`pays/cancel-partial/${trxId}`, 'get', {});
             setState(r ?? null);
@@ -74,13 +85,17 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
                 });
                 setQty(pre);
                 if (r.request_reason) setReason(r.request_reason);
+                set사정('buyer');
             }
             setLoading(false);
         })();
     }, [open, trxId]);
 
     const lines = state?.lines ?? [];
-    const 고른수량 = (l) => Math.max(0, Math.min(Number(qty[l.order_id]) || 0, l.remain_count));
+    const 직접수량 = (l) => Math.max(0, Math.min(Number(qty[l.order_id]) || 0, l.remain_count));
+    // 본상품을 다 고르면 그 상품의 추가상품 줄도 함께 취소된다(서버 cancel.js 와 같은 규칙, 2026-11-20).
+    const 함께 = 함께취소할추가상품(lines, { 키: (l) => l.order_id, 남은: (l) => l.remain_count, 고른: 직접수량 });
+    const 고른수량 = (l) => 함께[l.order_id] ?? 직접수량(l);
     const 고른줄 = lines.filter((l) => 고른수량(l) > 0);
 
     // 입력을 받는 그 자리에서 남은 수량으로 깎는다.
@@ -128,14 +143,45 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
             : `${commarNumber(예상액)}원 취소하기`;
     };
 
+    const 보낼것 = () => 고른줄.map((l) => ({ order_id: l.order_id, qty: 고른수량(l) }));
+
+    // 확인 단계로 — 서버에 실제와 같은 계산을 맡겨 정확한 환불액을 받는다(아무것도 바뀌지 않는다).
+    const 미리보기 = async (처리 = 배송처리) => {
+        set미리중(true);
+        const r = await apiManager(`pays/cancel-partial/${trxId}/preview`, 'create', { items: 보낼것(), fault: 사정, ship_choice: 처리 });
+        set미리중(false);
+        if (!r) return false;
+        set미리(r);
+        return true;
+    };
+    const 확인으로 = async () => {
+        set배송처리(null);
+        if (await 미리보기(null)) set확인단계(true);
+    };
+    const 배송처리고르기 = async (v) => { set배송처리(v); await 미리보기(v); };
+
+    // 손님 취소요청 거절 — 요청을 닫고, 주문이 「취소요청」이면 「결제완료」로 되돌린다
+    const 요청거절 = async () => {
+        if (!window.confirm('손님의 취소요청을 거절할까요?\n요청이 닫히고, 주문 전체를 요청한 경우 주문은 「결제완료」로 돌아갑니다. 손님에게는 따로 알려 주세요.')) return;
+        setBusy(true);
+        const r = await apiManager(`transactions/${trxId}/cancel-request/reject`, 'create', { reason: reason || null });
+        setBusy(false);
+        if (!r) return;
+        toast.success('취소요청을 거절했습니다.');
+        onDone?.();
+        onClose?.();
+    };
+
     const 실행 = async () => {
         if (!고른줄.length) { toast.error('취소할 상품과 수량을 선택해 주세요.'); return; }
         setBusy(true);
         const r = await apiManager(`pays/cancel-partial/${trxId}`, 'create', {
-            items: 고른줄.map((l) => ({ order_id: l.order_id, qty: 고른수량(l) })),
+            items: 보낼것(),
             reason: reason || null,
             idem_key: idemKey,
             shipped_confirm: state?.shipped && 회수확인 ? 1 : 0,
+            fault: 사정,
+            ship_choice: 배송처리,
         });
         setBusy(false);
         if (!r) return;                        // 실패 사유는 apiManager 가 토스트로 띄운다
@@ -174,21 +220,55 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
                             </Stack>
                         ))}
                         <Divider />
-                        <Stack direction="row" justifyContent="space-between" alignItems="baseline">
-                            <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>환불 예상액</Typography>
-                            <Typography sx={{ fontSize: 20, fontWeight: 800 }}>{commarNumber(예상액)}원</Typography>
-                        </Stack>
+                        {/* 빼야 할 배송비가 상품값보다 큰 경우 — 가맹점이 그 자리에서 고른다(2026-11-20) */}
+                        {미리?.need_ship_choice && !배송처리 &&
+                            <Alert severity="warning" sx={{ py: 0.5 }}>
+                                <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>{미리.message}</Typography>
+                            </Alert>}
+                        {(미리?.need_ship_choice || 배송처리) &&
+                            <RadioGroup value={배송처리 ?? ''} onChange={(e) => 배송처리고르기(e.target.value)}>
+                                <FormControlLabel value="waive" control={<Radio size="small" />} disabled={미리중 || busy}
+                                    label={<Typography sx={{ fontSize: 13 }}>배송비를 받지 않고 상품값을 환불합니다(배송비는 쇼핑몰 부담)</Typography>} />
+                                <FormControlLabel value="no_refund" control={<Radio size="small" />} disabled={미리중 || busy}
+                                    label={<Typography sx={{ fontSize: 13 }}>환불 없이 상품만 주문에서 뺍니다(상품값으로 배송비를 대신 받음)</Typography>} />
+                            </RadioGroup>}
+                        {미리 && !미리.need_ship_choice && <>
+                            <Stack direction="row" justifyContent="space-between">
+                                <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>취소 상품 금액</Typography>
+                                <Typography sx={{ fontSize: 13 }}>{commarNumber(미리.merch_amount)}원</Typography>
+                            </Stack>
+                            {Number(미리.delivery_adjust) < 0 &&
+                                <Stack direction="row" justifyContent="space-between">
+                                    <Typography sx={{ fontSize: 13, color: 'error.main' }}>배송비 차감 (남은 금액이 무료배송 기준 미만)</Typography>
+                                    <Typography sx={{ fontSize: 13, color: 'error.main' }}>−{commarNumber(-미리.delivery_adjust)}원</Typography>
+                                </Stack>}
+                            {Number(미리.delivery_adjust) > 0 &&
+                                <Stack direction="row" justifyContent="space-between">
+                                    <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>배송비 환불</Typography>
+                                    <Typography sx={{ fontSize: 13 }}>+{commarNumber(미리.delivery_adjust)}원</Typography>
+                                </Stack>}
+                            {미리.fault === 'seller' && Number(미리.delivery_planned) > 0 &&
+                                <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>판매자 사정이라 배송비 {commarNumber(미리.delivery_planned)}원을 빼지 않습니다.</Typography>}
+                            <Stack direction="row" justifyContent="space-between" alignItems="baseline">
+                                <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>환불액</Typography>
+                                <Typography sx={{ fontSize: 20, fontWeight: 800 }}>{commarNumber(미리.amount)}원</Typography>
+                            </Stack>
+                            {Number(미리.point_amount) > 0 &&
+                                <Typography sx={{ fontSize: 12, color: 'text.secondary', textAlign: 'right' }}>
+                                    결제 취소 {commarNumber(미리.pg_amount)}원 + 포인트 {commarNumber(미리.point_amount)}P 돌려줌
+                                </Typography>}
+                        </>}
+                        <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
+                            취소 사유: {사정 === 'seller' ? '판매자 사정' : '손님 사정'}
+                        </Typography>
                         {reason &&
                             <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>사유: {reason}</Typography>}
                         {state?.shipped &&
                             <Alert severity="error" sx={{ py: 0.5 }}><Typography variant="caption">출고된 주문을 회수 확인 후 취소합니다. 이 내용은 상태 변경 이력에 남습니다.</Typography></Alert>}
-                        <Alert severity={전부취소 ? 'info' : 'warning'} sx={{ py: 0.5 }}>
-                            <Typography variant="caption">
-                                {전부취소
-                                    ? '주문 전체가 취소되며 배송비도 함께 환불됩니다.'
-                                    : '부분 취소라 배송비는 환불되지 않습니다. 남은 금액이 무료배송 기준에 못 미치면 배송비가 환불액에서 차감됩니다.'}
-                            </Typography>
-                        </Alert>
+                        {전부취소 &&
+                            <Alert severity="info" sx={{ py: 0.5 }}>
+                                <Typography variant="caption">주문 전체가 취소되며 배송비도 함께 환불됩니다.</Typography>
+                            </Alert>}
                     </Stack>}
 
                 {!확인단계 && loading && <Typography sx={{ fontSize: 14, py: 2 }}>불러오는 중…</Typography>}
@@ -246,16 +326,18 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
                                         {Number(l.requested_count) > 0 ? ` · 고객요청 ${Math.min(Number(l.requested_count), l.remain_count)}개` : ''}
                                         {' · '}<b>남음 {l.remain_count}개</b>
                                     </Typography>
+                                    {함께[l.order_id] !== undefined &&
+                                        <Typography sx={{ fontSize: 12, color: 'error.main' }}>본상품을 모두 취소하므로 이 추가상품도 함께 취소됩니다.</Typography>}
                                 </Stack>
                                 <TextField
                                     size="small" type="number" sx={{ width: 96 }}
                                     label="취소 수량"
-                                    disabled={l.remain_count === 0 || busy || 잠금}
-                                    value={qty[l.order_id] ?? ''}
+                                    disabled={l.remain_count === 0 || busy || 잠금 || 함께[l.order_id] !== undefined}
+                                    value={함께[l.order_id] ?? qty[l.order_id] ?? ''}
                                     onChange={(e) => 수량입력(l, e.target.value)}
                                     inputProps={{ min: 0, max: l.remain_count, inputMode: 'numeric' }}
                                 />
-                                <Button size="small" variant="outlined" disabled={l.remain_count === 0 || busy || 잠금}
+                                <Button size="small" variant="outlined" disabled={l.remain_count === 0 || busy || 잠금 || 함께[l.order_id] !== undefined}
                                     onClick={() => setQty({ ...qty, [l.order_id]: l.remain_count })}>전부</Button>
                             </Stack>
                         ))}
@@ -275,6 +357,18 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
                         )}
 
                         <Divider />
+                        <Stack>
+                            <Typography sx={{ fontSize: 13, fontWeight: 700 }}>누구 사정으로 취소하나요?</Typography>
+                            <RadioGroup row value={사정} onChange={(e) => set사정(e.target.value)}>
+                                <FormControlLabel value="buyer" control={<Radio size="small" />} disabled={busy}
+                                    label={<Typography sx={{ fontSize: 13 }}>손님 사정(단순 변심 등)</Typography>} />
+                                <FormControlLabel value="seller" control={<Radio size="small" />} disabled={busy}
+                                    label={<Typography sx={{ fontSize: 13 }}>판매자 사정(품절·배송 불가 등)</Typography>} />
+                            </RadioGroup>
+                            <Typography sx={{ fontSize: 11.5, color: 'text.secondary' }}>
+                                판매자 사정이면 무료배송 기준이 깨져도 손님 환불액에서 배송비를 빼지 않습니다.
+                            </Typography>
+                        </Stack>
                         <TextField
                             size="small" fullWidth label="취소 사유 (선택)" placeholder="예시) 고객 요청"
                             value={reason} disabled={busy}
@@ -293,8 +387,8 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
                         <Typography sx={{ fontSize: 11.5, color: 'text.disabled', mt: -0.5 }}>
                             {전부취소
                                 ? '전부 취소되므로 배송비도 함께 환불됩니다.'
-                                : '부분 취소에는 배송비가 환불되지 않습니다. 남은 금액이 무료배송 기준에 못 미치면 배송비가 환불액에서 차감됩니다.'}
-                            {' 최종 금액은 서버가 계산합니다.'}
+                                : '부분 취소에는 배송비가 환불되지 않습니다. 손님 사정으로 취소해 남은 금액이 무료배송 기준에 못 미치면 배송비가 환불액에서 차감됩니다. 상품마다 배송비를 받는 몰은 그 상품을 모두 취소하면 그 상품의 배송비가 환불됩니다.'}
+                            {' 배송비를 반영한 정확한 환불액은 다음 단계에서 보여 드립니다.'}
                         </Typography>
                     </Stack>}
             </DialogContent>
@@ -312,18 +406,21 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
                     </Button>
                 </>}
                 {!확인단계 && !(!loading && state && !state.partial_supported && onFullCancel) && <>
+                    {/* 손님 취소요청 거절 — 일부 요청은 주문 상태가 그대로라 이 버튼으로 닫는다 */}
+                    {state?.has_request &&
+                        <Button color="inherit" onClick={요청거절} disabled={busy} sx={{ mr: 'auto' }}>요청 거절</Button>}
                     <Button onClick={onClose} disabled={busy}>닫기</Button>
                     <Button
-                        variant="contained" color="error" onClick={() => set확인단계(true)}
-                        disabled={busy || !(state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) || !state?.partial_supported || !고른줄.length}
+                        variant="contained" color="error" onClick={확인으로}
+                        disabled={busy || 미리중 || !(state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) || !state?.partial_supported || !고른줄.length || !사정}
                     >
-                        {실행글()}
+                        {미리중 ? '계산 중…' : (고른줄.length && !사정 && state?.partial_supported ? '누구 사정인지 고르세요' : 실행글())}
                     </Button>
                 </>}
                 {확인단계 && <>
-                    <Button onClick={() => set확인단계(false)} disabled={busy}>뒤로</Button>
-                    <Button variant="contained" color="error" onClick={실행} disabled={busy}>
-                        {busy ? '취소 처리 중…' : '네, 취소합니다'}
+                    <Button onClick={() => { set확인단계(false); set미리(null); set배송처리(null); }} disabled={busy}>뒤로</Button>
+                    <Button variant="contained" color="error" onClick={실행} disabled={busy || 미리중 || !미리 || 미리.need_ship_choice}>
+                        {busy ? '취소 처리 중…' : 미리 && !미리.need_ship_choice ? `네, ${commarNumber(미리.amount)}원 환불하고 취소합니다` : '처리 방법을 고르세요'}
                     </Button>
                 </>}
             </DialogActions>

@@ -284,6 +284,17 @@ export const getTrxStatusByNumber = num => {
 // (백엔드 transaction.controller 의 '반품/환불조회' 필터도 둘 다 본다)
 //
 // 우선순위: 취소완료 > 취소요청 > 일반 진행상태.
+// 손님 화면의 주문 상태(2026-11-20) — 「결제완료 · 일부 취소」, 「결제완료 · 취소요청 중」.
+//   일부 상품만 취소되거나 취소요청하면 주문 상태는 그대로라, 손님은 자기 요청이 접수됐는지·무엇이 취소됐는지 알 수 없었다.
+//   관리자 엑셀 등은 getOrderStatusText 를 그대로 쓴다(여기 꼬리는 손님 화면 전용).
+export const 주문상태꼬리 = (row = {}) => {
+  if (Number(row?.is_cancel) === 1 || Number(row?.is_cancel_trans) === 1) return [];
+  const 꼬리 = [];
+  if (Number(row?.partial_refund) > 0 || (row?.orders ?? []).some((o) => Number(o?.cancel_count) > 0)) 꼬리.push('일부 취소');
+  if (Number(row?.trx_status) !== 1 && Number(row?.cancel_request_count) > 0) 꼬리.push('취소요청 중');
+  return 꼬리;
+};
+export const 손님주문상태 = (row, translate) => [getOrderStatusText(row), ...주문상태꼬리(row)].map((k) => translate(k)).join(' · ');
 export const getOrderStatusText = (row = {}) => {
   if (Number(row?.is_cancel) === 1 || Number(row?.is_cancel_trans) === 1) return '취소완료';
   // 금액이 음수인 행은 예전 데이터의 취소 표기 방식이다(기존 화면들이 쓰던 규칙을 유지).

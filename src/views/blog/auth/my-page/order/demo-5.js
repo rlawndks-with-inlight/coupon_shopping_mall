@@ -4,12 +4,13 @@ import { Tabs, Tab, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import { commarNumber, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function';
+import { commarNumber, getOrderStatusText, 손님주문상태, commarNumberWithUnit } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
+import CancelLineNote from 'src/components/elements/shop/CancelLineNote';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -134,7 +135,7 @@ const Demo5 = (props) => {
                 >
                     {_.uniqBy(orderList, 'trx_status').map((data, idx) => {
                         return <Tab
-                            label={translate(getOrderStatusText(data))}
+                            label={손님주문상태(data, translate)}
                             value={data.trx_status}
                             sx={{
                                 borderBottom: '1px solid',
@@ -176,8 +177,8 @@ const Demo5 = (props) => {
                                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                     <div>{formatLang(item, 'product_name') || item.order_name}</div>
                                                     <div>{commarNumberWithUnit(item.order_amount)}</div>
-                                                    <div>{translate('옵션')} : {getOptionText(item) || translate('기본')} / {translate('{{n}}개', { n: item.order_count })}</div>
-                                                    <div style={{ marginTop: '0.5rem' }}>{translate(getOrderStatusText(item))} · {translate('주문번호')} {item.ord_num}</div>
+                                                    <div>{translate('옵션')} : {getOptionText(item) || translate('기본')} / {translate('{{n}}개', { n: item.order_count })}<CancelLineNote line={item} cancelled={item?.trx?.is_cancel_trans == 1} /></div>
+                                                    <div style={{ marginTop: '0.5rem' }}>{손님주문상태(item?.trx ?? item, translate)} · {translate('주문번호')} {item.ord_num}</div>
                                                 </div>
                                             </div>
                                             <AddressButton>

@@ -16,45 +16,111 @@ import { getOptionLabel, 섬추가비 } from 'src/utils/shop-util';
 export const 취소빨강 = (row) => ({ color: `${row?.is_cancel == 1 ? 'red' : ''}` });
 
 const 작은글 = { fontSize: '12px', color: '#888' };
+
+// 부분취소(2026-11-20) — 취소해도 주문 줄 수량(order_count)은 그대로고 cancel_count 만 는다.
+//   예전 목록·엑셀은 order_count 만 보여서, 목록을 보고 포장하면 취소한 상품까지 나갔다.
+//   살아 있는 주문은 「보낼 수량」(남은 수량)을 보이고, 전체취소된 주문·취소 원장 줄은 원래 수량을 그대로 둔다.
+export const 살아있는주문 = (row) => row?.is_cancel != 1 && row?.is_cancel_trans != 1;
+export const 줄남은수량 = (o) => Math.max(0, (Number(o?.order_count) || 0) - (Number(o?.cancel_count) || 0));
+export const 보낼수량 = (row, o) => (살아있는주문(row) ? 줄남은수량(o) : (Number(o?.order_count) || 0));
+export const 부분취소있음 = (row) => 살아있는주문(row) && (row?.orders ?? []).some((o) => Number(o?.cancel_count) > 0);
 const 옵션글자 = { fontSize: '12.5px', color: '#777', wordBreak: 'keep-all' };
+
+// 추가상품 줄(주문 때 order_groups 스냅샷에 addon_line=1) — 본상품 아래 들여 쓴 한 줄로 보인다.
+//   예전엔 「꽁치 과메기 야채세트 (추가상품)」처럼 본상품 이름이 한 번 더 나와, 취소선이 그어지면 본상품이 취소된 것으로 읽혔다(11/20 지적).
+const 추가상품줄 = (o) => (o?.groups ?? []).some((g) => Number(g?.addon_line) === 1);
+
+// 줄 순서: 담은 순서(id 오름차순)로 본상품을 놓고, 그 상품의 추가상품 줄을 바로 아래에 붙인다.
+const 줄순서 = (orders) => {
+  const 정렬 = [...(orders ?? [])].sort((a, b) => Number(a?.id) - Number(b?.id));
+  const 본상품들 = 정렬.filter((o) => !추가상품줄(o));
+  const 추가들 = 정렬.filter(추가상품줄);
+  const 결과 = [];
+  for (const m of 본상품들) {
+    결과.push(m);
+    for (const a of 추가들) if (Number(a?.product_id) === Number(m?.product_id) && !결과.includes(a)) 결과.push(a);
+  }
+  return [...결과, ...추가들.filter((x) => !결과.includes(x))];
+};
+
+// 줄 상태 표시 — 네이버·카페24 관리자처럼 상품 줄마다 상태를 붙인다(우리 주문 상태는 주문 단위라 줄 상태를 따로 보여 준다).
+const 표 = (bg, fg) => ({ display: 'inline-block', fontSize: '11.5px', fontWeight: 700, lineHeight: '18px', padding: '0 6px', borderRadius: '4px', background: bg, color: fg, whiteSpace: 'nowrap' });
+// 손님이 그 줄을 취소요청했으면(아직 처리 전) 「취소요청 n개」를 함께 붙인다(일부 요청은 주문 상태가 그대로라 줄에서 보여야 한다, 11/20).
+const 줄상태 = ({ 취소, 남음, 요청 }) => {
+  if (!(취소 > 0) && !(요청 > 0)) return null;
+  return (
+    <span style={{ display: 'inline-flex', gap: '3px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+      {요청 > 0 && <span style={{ ...표('#fff', '#c23b3b'), border: '1px solid #e7a3a3', lineHeight: '16px' }}>취소요청 {commarNumber(요청)}개</span>}
+      {취소 > 0 && (남음 === 0
+        ? <span style={표('#fde9e9', '#c23b3b')}>취소</span>
+        : <span style={표('#fff1dc', '#a85b00')}>{commarNumber(취소)}개 취소</span>)}
+    </span>
+  );
+};
+
+const 추가상품표 = { fontSize: '0.72rem', color: '#5a8a1e', border: '1px solid #cde3a6', borderRadius: '4px', padding: '0 3px' };
 
 // 주문 한 줄 — 상품명(누르면 상품 수정 화면), 그 아래 옵션·추가상품을 작은 글씨로.
 // 금액이 붙은 옵션은 금액도 적는다. 0원이면 안 적는다(조합형은 개별가가 0이고 추가금이 따로 붙는다).
-const 주문줄 = ({ order, 여러줄 }) => (
-  <Col style={{ gap: '2px' }}>
-    <div style={{ cursor: 'pointer', wordBreak: 'keep-all' }}
-      onClick={() => { window.open(`/manager/products/edit/${order?.product_id}`) }}>
-      {order?.order_name}
-    </div>
-    {(order?.groups ?? []).map((group, gi) => (
-      <div key={gi} style={옵션글자}>
-        {/* 선택옵션과 추가상품을 구분한다 — 필수로 고른 것인지 돈이 붙은 추가상품인지 보이게 */}
-        {group?.group_name}
-        {Number(group?.group_type) === 1 &&
-          <span style={{ marginLeft: '4px', fontSize: '0.72rem', color: '#5a8a1e', border: '1px solid #cde3a6', borderRadius: '4px', padding: '0 3px' }}>추가상품</span>}
-        {': '}
-        {(group?.options ?? []).map((option) => `${getOptionLabel(option)}${Number(option?.option_price)
-          ? ` (${Number(option.option_price) > 0 ? '+' : ''}${commarNumber(option.option_price)}원)` : ''}`).join(' / ')}
+// 수량 글: 일부 취소면 「3개 중 2개 발송」(옆 표시가 「1개 취소」), 모두 취소면 「발송 안 함」, 취소가 없으면(여러 줄일 때만) 「2개 · 52,000원」.
+const 주문줄 = ({ order, 여러줄, 살아있음 }) => {
+  const 취소 = 살아있음 ? Number(order?.cancel_count) || 0 : 0;
+  const 남음 = 줄남은수량(order);
+  const 다취소 = 취소 > 0 && 남음 === 0;
+  const 추가 = 추가상품줄(order);
+  const 흐림 = 다취소 ? { color: '#aaa' } : {};
+  const 줄긋기 = 다취소 ? { textDecoration: 'line-through' } : {};
+  const 수량글 = 취소 > 0
+    ? (다취소 ? '발송 안 함' : `${commarNumber(order?.order_count)}개 중 ${commarNumber(남음)}개 발송`)
+    : (여러줄 ? `${commarNumber(order?.order_count ?? 1)}개 · ${commarNumber(order?.order_amount)}원` : '');
+  return (
+    <Col style={{ gap: '2px', ...(추가 ? { paddingLeft: '10px', borderLeft: '2px solid #e3e3e3' } : {}) }}>
+      <div style={{ display: 'flex', gap: '6px', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        {추가
+          // 추가상품 줄은 본상품 이름을 되풀이하지 않고 고른 추가상품만 적는다
+          ? <div style={{ wordBreak: 'keep-all', fontSize: '13px', ...흐림 }}>
+              <span style={{ ...추가상품표, marginRight: '4px' }}>추가상품</span>
+              <span style={줄긋기}>
+                {(order?.groups ?? []).flatMap((g) => (g?.options ?? []).map((option) => `${getOptionLabel(option)}${Number(option?.option_price)
+                  ? ` (+${commarNumber(option.option_price)}원)` : ''}`)).join(' / ')}
+              </span>
+            </div>
+          : <div style={{ cursor: 'pointer', wordBreak: 'keep-all', ...흐림, ...줄긋기 }}
+              onClick={() => { window.open(`/manager/products/edit/${order?.product_id}`) }}>
+              {order?.order_name}
+            </div>}
+        <줄상태 취소={취소} 남음={남음} 요청={살아있음 ? Number(order?.requested_count) || 0 : 0} />
       </div>
-    ))}
-    {여러줄 &&
-      <div style={옵션글자}>{commarNumber(order?.order_count ?? 1)}개 · {commarNumber(order?.order_amount)}원</div>}
-    {order?.seller_id > 0 &&
-      <div style={옵션글자}>셀러 {order?.seller_user_name}</div>}
-  </Col>
-);
+      {!추가 && (order?.groups ?? []).map((group, gi) => (
+        <div key={gi} style={{ ...옵션글자, ...흐림 }}>
+          {/* 선택옵션과 추가상품을 구분한다 — 필수로 고른 것인지 돈이 붙은 추가상품인지 보이게 */}
+          {group?.group_name}
+          {Number(group?.group_type) === 1 &&
+            <span style={{ ...추가상품표, marginLeft: '4px' }}>추가상품</span>}
+          {': '}
+          {(group?.options ?? []).map((option) => `${getOptionLabel(option)}${Number(option?.option_price)
+            ? ` (${Number(option.option_price) > 0 ? '+' : ''}${commarNumber(option.option_price)}원)` : ''}`).join(' / ')}
+        </div>
+      ))}
+      {수량글 &&
+        <div style={{ ...옵션글자, ...(취소 > 0 && !다취소 ? { color: '#a85b00', fontWeight: 600 } : 흐림) }}>{수량글}</div>}
+      {order?.seller_id > 0 &&
+        <div style={옵션글자}>셀러 {order?.seller_user_name}</div>}
+    </Col>
+  );
+};
 
 // 상품명 칸 — 먼저 담은 줄 하나를 보이고, 줄이 여럿이면 「외 N건」을 눌러 펼친다.
+//   취소된 줄이 있는 주문은 처음부터 펼친다 — 첫 줄만 보고 포장하면 취소를 놓친다.
 // 훅을 쓰므로 action 안에서 바로 부르지 말고 컴포넌트로 그린다(<상품칸 key row />).
 const 상품칸 = ({ row }) => {
-  const [펼침, set펼침] = useState(false);
-  // 서버는 줄을 최신순(id 내림차순)으로 준다 — 담은 순서로 돌려 본상품이 먼저 오게 한다
-  const 줄들 = [...(row?.orders ?? [])].sort((a, b) => Number(a?.id) - Number(b?.id));
+  const [펼침, set펼침] = useState(부분취소있음(row) || (살아있는주문(row) && Number(row?.cancel_request_count) > 0));
+  const 줄들 = 줄순서(row?.orders);
   if (!줄들.length) return <div style={{ color: '#bbb' }}>---</div>;
   const 여러줄 = 줄들.length > 1;
   return (
-    <Col style={{ gap: '6px', minWidth: '180px', maxWidth: '300px' }}>
-      {(펼침 ? 줄들 : 줄들.slice(0, 1)).map((order, i) => <주문줄 key={order?.id ?? i} order={order} 여러줄={여러줄} />)}
+    <Col style={{ gap: '6px', minWidth: '200px', maxWidth: '320px' }}>
+      {(펼침 ? 줄들 : 줄들.slice(0, 1)).map((order, i) => <주문줄 key={order?.id ?? i} order={order} 여러줄={여러줄} 살아있음={살아있는주문(row)} />)}
       {여러줄 &&
         <button type="button" onClick={() => set펼침((v) => !v)}
           style={{ alignSelf: 'flex-start', padding: 0, border: 0, background: 'none', color: '#1976d2', cursor: 'pointer', fontSize: '12.5px' }}>
@@ -91,11 +157,16 @@ export const 수량칸 = {
   action: (row) => {
     const 줄들 = row?.orders ?? [];
     if (!줄들.length) return '---';
-    const 합 = 줄들.reduce((s, o) => s + (Number(o?.order_count) || 0), 0);
+    // 보낼 수량의 합. 취소가 있으면 아래에 「주문 4개 중 2개 취소」 — 무엇에서 무엇을 뺐는지 그대로 적는다.
+    const 합 = 줄들.reduce((s, o) => s + 보낼수량(row, o), 0);
+    const 원래 = 줄들.reduce((s, o) => s + (Number(o?.order_count) || 0), 0);
+    const 취소합 = 살아있는주문(row) ? 줄들.reduce((s, o) => s + (Number(o?.cancel_count) || 0), 0) : 0;
     return (
       <div style={{ whiteSpace: 'nowrap', textAlign: 'right' }}>
         <div>{commarNumber(합)}</div>
-        {줄들.length > 1 ? <div style={작은글}>상품 {줄들.length}줄</div> : null}
+        {취소합 > 0
+          ? <div style={{ ...작은글, color: '#a85b00' }}>주문 {commarNumber(원래)}개 중<br />{commarNumber(취소합)}개 취소</div>
+          : (줄들.length > 1 ? <div style={작은글}>상품 {줄들.length}줄</div> : null)}
       </div>
     );
   },
@@ -119,6 +190,12 @@ export const 금액칸 = {
       <div style={{ whiteSpace: 'nowrap', textAlign: 'right' }}>
         <div style={{ fontWeight: 600 }}>{commarNumber(row['amount'])}원</div>
         {글 ? <div style={작은글}>{글}</div> : null}
+        {/* 부분취소: 결제한 금액 아래에 돌려준 금액과 남은 금액을 나눠 적는다(「부분취소 −n원」 한 줄은 무엇에서 뺀 건지 읽히지 않았다, 11/20) */}
+        {Number(row?.partial_refund) > 0 &&
+          <div style={{ marginTop: '2px', fontSize: '12px', lineHeight: 1.5 }}>
+            <div style={{ color: '#c23b3b' }}>환불 {commarNumber(row.partial_refund)}원{Number(row?.partial_refund_point) > 0 ? ` + ${commarNumber(row.partial_refund_point)}P` : ''}</div>
+            <div style={{ color: '#333', fontWeight: 600 }}>남은 금액 {commarNumber(Math.max(0, (Number(row?.amount) || 0) - Number(row.partial_refund)))}원</div>
+          </div>}
       </div>
     );
   },

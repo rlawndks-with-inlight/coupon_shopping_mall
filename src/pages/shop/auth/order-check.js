@@ -7,12 +7,13 @@ import ShopLayout from 'src/layouts/shop/ShopLayout';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import OrderCancelButton, { canCancelOrder } from 'src/components/elements/shop/OrderCancelButton';
-import { commarNumber, sanitizePhoneInput, getOrderStatusText, getPriceUnitByLang } from 'src/utils/function';
+import { commarNumber, sanitizePhoneInput, getOrderStatusText, 손님주문상태, getPriceUnitByLang } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 import PasswordField from 'src/components/elements/PasswordField';
 import ReviewWriteButton from 'src/components/elements/shop/review/ReviewWriteButton';
 import { reviewSettings } from 'src/utils/review';
 import { 비회원조회꺼내기 } from 'src/utils/guest-lookup';
+import CancelLineNote, { PartialRefundNote } from 'src/components/elements/shop/CancelLineNote';
 
 const Wrappers = styled.div`
   max-width: 640px;
@@ -65,7 +66,7 @@ const OrderDetail = ({ order, reviewLines, guest, onReviewDone }) => {
           {/* installment 가 숫자 0(일시불)이면 `0 && ...` 이 0 으로 평가돼 화면에 '0' 이 찍혔다.
               할부가 실제로 있을 때(개월>0)만 표시한다 — 일시불/0/빈값은 숨긴다. */}
           {Number(order?.installment) > 0 && <KV k={translate('할부기간')} v={translate('{{n}}개월', { n: String(Number(order?.installment)) })} />}
-          <KV k={translate('주문현황')} v={translate(getOrderStatusText(order))} />
+          <KV k={translate('주문현황')} v={손님주문상태(order, translate)} />
           <KV k={translate('구매자')} v={`${order?.buyer_name || '-'}${order?.buyer_phone ? ' · ' + order?.buyer_phone : ''}`} />
           {order?.invoice_num && (
             <KV k={translate("택배사/송장")} v={track
@@ -93,7 +94,7 @@ const OrderDetail = ({ order, reviewLines, guest, onReviewDone }) => {
             {(order?.orders || []).map((o, i) => (
               <Box key={i}>
                 <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="body2">{o?.order_name} · {o?.order_count}{translate('개')}</Typography>
+                  <Typography variant="body2">{o?.order_name} · {o?.order_count}{translate('개')}<CancelLineNote line={o} cancelled={order?.is_cancel_trans == 1} /></Typography>
                   <Typography variant="body2" sx={{ fontWeight: 700 }}>{won(o?.order_amount)}</Typography>
                 </Stack>
                 {/* 비회원 구매자 후기 — 받은 뒤(배송완료·출고 3일 뒤)부터 이 줄에 「후기 쓰기」가 생긴다. 판정은 서버. */}
@@ -108,6 +109,7 @@ const OrderDetail = ({ order, reviewLines, guest, onReviewDone }) => {
             <Typography variant="subtitle2">{translate('결제금액')}</Typography>
             <Typography variant="h6" sx={{ fontWeight: 900 }}>{won(order?.amount)}</Typography>
           </Stack>
+          <PartialRefundNote row={order} style={{ textAlign: 'right' }} />
         </CardContent>
       </Card>
     </>
@@ -223,7 +225,7 @@ const OrderCheck = () => {
                     <Box>
                       <Typography variant="subtitle2">{o?.ord_num}</Typography>
                       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        {translate(getOrderStatusText(o))} · {(o?.orders?.[0]?.order_name) || '-'}
+                        {손님주문상태(o, translate)} · {(o?.orders?.[0]?.order_name) || '-'}
                         {o?.orders?.length > 1 ? ` ${translate('외 {{n}}건', { n: String(o.orders.length - 1) })}` : ''}
                       </Typography>
                     </Box>

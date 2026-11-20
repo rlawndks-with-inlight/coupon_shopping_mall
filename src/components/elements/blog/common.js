@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
-import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function'
+import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang, getOrderStatusText, 손님주문상태, commarNumberWithUnit } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
 import { useEffect, useState, useRef } from 'react'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField } from '@mui/material'
@@ -30,6 +30,7 @@ import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
 import { useLocales } from 'src/locales'
 import { useRouter } from 'next/router'
 import { formatLang } from 'src/utils/format'
+import CancelLineNote, { PartialRefundNote } from 'src/components/elements/shop/CancelLineNote';
 
 
 const ItemsContainer = styled.div`
@@ -441,7 +442,7 @@ export const HistoryTable = props => {
                                                                     </>}
                                                                 <Row>
                                                                     <div style={{ minWidth: '62px' }}>{translate('수량')}: </div>
-                                                                    <div>{order?.order_count}</div>
+                                                                    <div>{order?.order_count}<CancelLineNote line={order} cancelled={row?.is_cancel_trans == 1} /></div>
                                                                 </Row>
                                                                 <Row>
                                                                     <div style={{ minWidth: '62px' }}>{translate('가격')}: </div>
@@ -465,9 +466,9 @@ export const HistoryTable = props => {
                                             </Row>
                                         </TableCell>
                                         <TableCell>{row.ord_num}</TableCell>
-                                        <TableCell onClick={() => { /*console.log(row)*/ }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
+                                        <TableCell onClick={() => { /*console.log(row)*/ }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}<PartialRefundNote row={row} /></TableCell>
                                         <TableCell>{row?.buyer_name}</TableCell>
-                                        <TableCell>{translate(getOrderStatusText(row))}</TableCell>
+                                        <TableCell>{손님주문상태(row, translate)}</TableCell>
                                         <TableCell>
                                             <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt ?? "---"} {row?.trx_tm ?? ""}</Box>
                                         </TableCell>
@@ -644,7 +645,7 @@ export const WishTable = props => {
                                                     {commarNumber(row?.product_price)}
                                                 </Box>
                                             )}
-                                            {commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
+                                            {commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}<PartialRefundNote row={row} />
                                         </TableCell>
                                         <TableCell>
                                             <Button variant='outlined' onClick={async () => {

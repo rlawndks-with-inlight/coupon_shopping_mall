@@ -4,7 +4,7 @@ import { Tabs, Tab, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import { commarNumber, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function';
+import { commarNumber, getOrderStatusText, 손님주문상태, commarNumberWithUnit } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
@@ -12,6 +12,7 @@ import ReviewWriteButton from 'src/components/elements/shop/review/ReviewWriteBu
 import useReviewWritable from 'src/components/elements/shop/review/useReviewWritable';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
+import CancelLineNote from 'src/components/elements/shop/CancelLineNote';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -170,9 +171,9 @@ const Demo4 = (props) => {
                                                 <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                                                     <div>{formatLang(item, 'product_name') || item?.order_name}</div>
                                                     <div>{commarNumberWithUnit(item?.order_amount)}</div>
-                                                    <div>{translate('옵션')} : {getOptionText(item) || '-'} / {item?.order_count}{translate('개')}</div>
+                                                    <div>{translate('옵션')} : {getOptionText(item) || '-'} / {item?.order_count}{translate('개')}<CancelLineNote line={item} cancelled={item?.trx?.is_cancel_trans == 1} /></div>
                                                     <div style={{ marginTop: '0.5rem' }}>{translate('주문번호')} : {item?.trx?.ord_num}</div>
-                                                    <div>{translate('주문현황')} : {translate(getOrderStatusText(item?.trx))}</div>
+                                                    <div>{translate('주문현황')} : {손님주문상태(item?.trx, translate)}</div>
                                                     <div>{translate('받는분')} : {item?.trx?.receiver || item?.trx?.buyer_name || '-'}</div>
                                                     <div>{translate('배송지')} : {item?.trx?.addr ? `${item?.trx?.addr} ${item?.trx?.detail_addr || ''}` : '-'}</div>
                                                     <div>{translate('송장번호')} : {item?.trx?.invoice_num || '-'}</div>

@@ -8,6 +8,7 @@ import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
 import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
 import { getOptionLabel } from 'src/utils/shop-util';
+import { 함께취소할추가상품 } from 'src/utils/cancel-addon';
 import PolicyBody from 'src/components/elements/shop/PolicyBody';
 import { CANCEL } from 'src/data/policy-content';
 
@@ -48,12 +49,19 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined', pass
   const [openNotice, setOpenNotice] = useState(false);
 
   if (!canCancelOrder(trx)) return null;
+  // 일부 상품을 이미 취소요청했고 판매자가 아직 처리하지 않았다(주문 상태는 그대로다, 2026-11-20). 서버도 다시 받지 않는다.
+  if (Number(trx?.cancel_request_count) > 0) {
+    return <Button variant={variant} color="error" disabled sx={sx}>{translate('취소요청 중')}</Button>;
+  }
 
   // 주문 줄 목록. 화면이 안 넘겨주면(옛 호출부) 줄 선택 없이 '주문 전체' 요청으로 간다.
   const 줄 = (Array.isArray(orders) ? orders : []).filter((o) => 남은수량(o) > 0);
   const 줄선택가능 = 줄.length > 0;
 
-  const 고른수량 = (o) => Math.max(0, Math.min(Number(qty[o.id]) || 0, 남은수량(o)));
+  const 직접수량 = (o) => Math.max(0, Math.min(Number(qty[o.id]) || 0, 남은수량(o)));
+  // 본상품을 모두 고르면 그 상품의 추가상품도 함께 취소를 요청한다(관리자 창·서버와 같은 규칙, 2026-11-20).
+  const 함께 = 함께취소할추가상품(줄, { 키: (o) => o.id, 남은: 남은수량, 고른: 직접수량 });
+  const 고른수량 = (o) => 함께[o.id] ?? 직접수량(o);
   const 고른줄 = 줄.filter((o) => 고른수량(o) > 0);
 
   // 입력을 받는 그 자리에서 남은 수량으로 깎는다.
@@ -114,12 +122,14 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined', pass
                     {commarNumberWithUnit(o?.order_amount, currentLang?.value)}
                     {' · '}{translate('{{n}}개 남음', { n: 남은수량(o) })}
                   </Typography>
+                  {함께[o.id] !== undefined &&
+                    <Typography sx={{ fontSize: 12, color: 'error.main' }}>{translate('본상품을 모두 취소하므로 이 추가상품도 함께 취소됩니다.')}</Typography>}
                 </Stack>
                 <TextField
                   size="small" type="number" sx={{ width: 88 }}
                   label={translate('수량')}
-                  disabled={loading}
-                  value={qty[o.id] ?? ''}
+                  disabled={loading || 함께[o.id] !== undefined}
+                  value={함께[o.id] ?? qty[o.id] ?? ''}
                   onChange={(e) => 수량입력(o, e.target.value)}
                   inputProps={{ min: 0, max: 남은수량(o), inputMode: 'numeric' }}
                 />
@@ -149,7 +159,7 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined', pass
                 금액은 서버가 계산한다 — 화면이 따로 계산하면 어긋났을 때 어느 쪽이 맞는지 알 수 없다. */}
             <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
               {고른줄.length > 0 && !줄.every((o) => 고른수량(o) === 남은수량(o))
-                ? translate('부분 취소에는 배송비가 환불되지 않습니다. 남은 금액이 무료배송 기준에 못 미치면 배송비가 환불액에서 차감됩니다.')
+                ? translate('부분 취소에는 배송비가 환불되지 않습니다. 남은 금액이 무료배송 기준에 못 미치면 배송비가 환불액에서 차감될 수 있습니다. 판매자 사정으로 취소되거나 상품마다 따로 낸 배송비는 돌려드립니다.')
                 : translate('주문 전체가 취소되며 배송비도 함께 환불됩니다.')}
             </Typography>
 

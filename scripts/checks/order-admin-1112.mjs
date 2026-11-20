@@ -31,11 +31,11 @@ eq('주문취소관리: 같은 칸 순서', 취소이름들.filter((n) => 요청
 t('주문관리: 구매자 칸이 번호 바로 다음(옆으로 밀어도 붙어 있는 세 번째 칸)', 이름들.indexOf('구매자명 / 연락처') === 1 && 이름들[0] === '번호');
 t('주문취소관리: 구매자 칸이 맨 앞(옆으로 밀어도 붙어 있는 칸)', 취소이름들[0] === '구매자명 / 연락처');
 t('두 화면 모두 「구매금액」 펼침 칸이 없다', ![...이름들, ...취소이름들].includes('구매금액') && !/AccordionSummary/.test(주석제거(화면) + 주석제거(취소화면)));
-t('두 화면 모두 칸 정의를 공용 파일에서 가져온다', [화면, 취소화면].every((src) => /import \{ 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸 \} from 'src\/components\/manager\/OrderColumns';/.test(src)));
+t('두 화면 모두 칸 정의를 공용 파일에서 가져온다', [화면, 취소화면].every((src) => /import \{ 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸(?:, [^}]*)? \} from 'src\/components\/manager\/OrderColumns';/.test(src)));
 t('주문관리: 상태·결제타입·이력은 그대로 뒤에 남는다', ['결제타입', '상태', '이력'].every((n) => 이름들.indexOf(n) > 이름들.indexOf('주소')));
 t('주문취소관리: 결제타입·취소·이력은 뒤에 남는다', ['결제타입', '취소', '이력'].every((n) => 취소이름들.indexOf(n) > 취소이름들.indexOf('주소')));
 t('상품명 칸은 훅을 컴포넌트 안에서 쓴다(action 안에서 useState 금지)', /action: \(row\) => <상품칸 key=\{row\?\.id\} row=\{row\} \/>/.test(공용)
-  && /const 상품칸 = \(\{ row \}\) => \{\s*const \[펼침, set펼침\] = useState\(false\);/.test(공용));
+  && /const 상품칸 = \(\{ row \}\) => \{\s*const \[펼침, set펼침\] = useState\((?:false|부분취소있음\(row\)[^;]*)\);/.test(공용));
 t('여러 줄이면 「외 N건 보기」로 펼친다', /외 \$\{줄들\.length - 1\}건 보기/.test(공용));
 t('옵션 금액이 상품명 아래에 그대로 보인다(예전 펼침과 같은 표기)', /commarNumber\(option\.option_price\)\}원\)/.test(공용));
 t('금액 칸: 결제금액 + 배송비 포함 표시', /\{commarNumber\(row\['amount'\]\)\}원/.test(공용) && /배송비 \$?\{commarNumber\(배송비\)\}원 포함/.test(공용));

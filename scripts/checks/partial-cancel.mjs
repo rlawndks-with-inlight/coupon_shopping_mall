@@ -91,8 +91,8 @@ eq('부분취소 지원 PG 화이트리스트', /const PARTIAL_CANCEL_METHODS = 
 eq('미지원 PG 는 막는다', /이 결제수단은 부분취소를 지원하지 않습니다/.test(pay), true);
 // 금액은 서버가 계산한다 — 화면이 보낸 금액을 믿으면 임의 환불이 된다
 // shipped_confirm 은 '출고 후 취소를 관리자가 확인했다'는 표시일 뿐 금액이 아니다(2026-09-14)
-eq('화면에서 금액을 받지 않는다', /const \{ items, reason, idem_key, shipped_confirm \} = req\.body/.test(pay), true);
-eq('브랜드 소유 확인', (pay.match(/canWriteBrand\(decode_user, state\.trx\?\.brand_id\)/g) || []).length, 2);
+eq('화면에서 금액을 받지 않는다', /const \{ items, reason, idem_key, shipped_confirm(?:, fault, ship_choice)? \} = req\.body/.test(pay) && !/const \{[^}]*\bamount\b[^}]*\} = req\.body/.test(pay.slice(pay.indexOf('cancelPartial:'), pay.indexOf('payletterCallback:'))), true);
+eq('브랜드 소유 확인(조회·실행·미리보기)', (pay.match(/canWriteBrand\(decode_user, state\.trx\?\.brand_id\)/g) || []).length, 3);
 const c = readFileSync(BACK + 'utils.js/cancel.js', 'utf8');
 // 원장을 PG 호출 **전에** 넣어야 같은 클릭의 이중 실행을 끊는다
 eq('원장이 PG 호출보다 먼저',
@@ -113,7 +113,7 @@ eq('전체복구는 이미 되돌린 만큼 뺀다', /const 남은 = Math\.max\(
 const FRONT = FRONT_ROOT;
 const dlg = readFileSync(FRONT + 'src/components/manager/PartialCancelDialog.js', 'utf8');
 // ⚠ 화면은 수량만 보낸다. 금액을 보내면 서버가 그걸 믿게 되는 순간 임의 환불이 된다.
-eq('화면은 수량만 보낸다', /items: 고른줄\.map\(\(l\) => \(\{ order_id: l\.order_id, qty: 고른수량\(l\) \}\)\)/.test(dlg), true);
+eq('화면은 수량만 보낸다', /const 보낼것 = \(\) => 고른줄\.map\(\(l\) => \(\{ order_id: l\.order_id, qty: 고른수량\(l\) \}\)\);/.test(dlg) && /items: 보낼것\(\),/.test(dlg), true);
 eq('금액을 보내지 않는다', /amount:\s*예상액/.test(dlg), false);
 // 같은 클릭이 두 번 도착하면 이중 환불이다 — 버튼 잠금만으로는 부족하다
 eq('중복 실행 키를 만든다', /idem_key: idemKey/.test(dlg), true);

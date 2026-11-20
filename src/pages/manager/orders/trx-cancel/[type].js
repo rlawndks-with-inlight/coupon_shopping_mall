@@ -17,7 +17,7 @@ import { sha256 } from "js-sha256";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import _ from 'lodash';
 import { getOptionLabel } from 'src/utils/shop-util';
-import { 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸 } from 'src/components/manager/OrderColumns';
+import { 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸, 부분취소있음 } from 'src/components/manager/OrderColumns';
 
 // 취소완료 탭의 줄은 원래 주문이 아니라 취소 원장 줄(is_cancel=1, 금액 음수, transaction_id → 원래 주문)이다.
 // 이력은 원래 주문에 쌓이므로 원장 줄이면 원래 주문의 이력을 연다(2026-11-06 미리보기에서 빈 이력으로 발견).
@@ -137,12 +137,17 @@ const TrxCancelList = () => {
       action: (row) => {
         // 취소를 우리 화면에서 처리해야 DB·재고·포인트가 함께 맞는다.
         // PG 콘솔에서만 취소하면 우리 쪽은 정상 주문으로 남고 매출·재고가 어긋난다.
-        if (row?.is_cancel == 1 || row?.is_cancel_trans == 1) return <div style={{ color: '#bbb' }}>취소됨</div>;
+        if (row?.is_cancel == 1 || row?.is_cancel_trans == 1) return <div style={{ color: '#bbb', whiteSpace: 'nowrap' }}>전체취소됨</div>;
+        // 일부만 취소된 주문 — 취소완료 탭에도 나온다(2026-11-20). 남은 상품을 더 취소할 수 있게 버튼은 그대로.
         return (
-          <Button size='small' variant='outlined' color='error'
-            onClick={() => { setCancelTrxId(row?.id); }}>
-            부분/전체 취소
-          </Button>
+          <Col style={{ gap: '4px', alignItems: 'flex-start' }}>
+            {부분취소있음(row) &&
+              <span style={{ fontSize: '11.5px', fontWeight: 700, lineHeight: '18px', padding: '0 6px', borderRadius: '4px', background: '#fff1dc', color: '#a85b00', whiteSpace: 'nowrap' }}>부분취소</span>}
+            <Button size='small' variant='outlined' color='error'
+              onClick={() => { setCancelTrxId(row?.id); }}>
+              부분/전체 취소
+            </Button>
+          </Col>
         );
       },
     },
@@ -201,7 +206,7 @@ const TrxCancelList = () => {
     pageSetting();
   }, [router.query])
   const pageSetting = () => {
-    onChangePage({ ...searchObj, cancel_status: (router.query?.type == 'all' || !router.query?.type) ? '' : router.query?.type, page: 1 });
+    onChangePage({ ...searchObj, cancel_status: (router.query?.type == 'all' || !router.query?.type) ? '' : router.query?.type, cancel_kind: '', page: 1 });
   }
   // 탭을 빨리 옮기면 앞 탭의 늦은 응답이 지금 탭 목록을 덮어쓴다(취소요청 탭에 취소완료 건이 보임) — 마지막 요청의 응답만 쓴다.
   const 조회번호 = useRef(0);
@@ -300,6 +305,14 @@ const TrxCancelList = () => {
             </FormControl>
           </Row>
           */}
+          {/* 취소완료 탭 — 전체취소와 부분취소(일부 상품만 취소된 주문)를 함께 보이고 나눠 볼 수 있게(2026-11-20) */}
+          {String(router.query?.type) === '2' &&
+            <Row style={{ padding: '12px 12px 0', columnGap: '0.5rem', flexWrap: 'wrap', rowGap: '0.5rem' }}>
+              {[['', '전체'], ['full', '전체취소'], ['partial', '부분취소']].map(([값, 이름]) => (
+                <Button key={값 || 'all'} size='small' variant={(searchObj?.cancel_kind ?? '') === 값 ? 'contained' : 'outlined'}
+                  onClick={() => onChangePage({ ...searchObj, cancel_kind: 값, page: 1 })}>{이름}</Button>
+              ))}
+            </Row>}
           <ManagerTable
             data={data}
             // defaultColumns 를 매 렌더 계산본 그대로 넘긴다.

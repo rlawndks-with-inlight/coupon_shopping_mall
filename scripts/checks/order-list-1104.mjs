@@ -19,7 +19,7 @@ for (const n of [1, 2, 4]) {
   t(`블로그 demo-${n}: 내 주문 조건(type=user)을 보낸다`, /apiManager\('transactions', 'list', \{ page: 1, page_size: 20, type: 'user' \}\)/.test(읽기(FRONT_ROOT, `src/views/blog/auth/my-page/order/demo-${n}.js`)));
 }
 // demo-1 은 줄 단위로 펼친 item 에 취소 칸이 없어서, item 으로 부르면 취소 건이 '결제완료'로 보인다
-t('블로그 demo-1: 상태는 주문 원본으로 판단한다', /getOrderStatusText\(item\.trx\)/.test(읽기(FRONT_ROOT, 'src/views/blog/auth/my-page/order/demo-1.js')));
+t('블로그 demo-1: 상태는 주문 원본으로 판단한다', /(?:getOrderStatusText|손님주문상태)\(item\.trx[,)]/.test(읽기(FRONT_ROOT, 'src/views/blog/auth/my-page/order/demo-1.js')));
 
 // ── 관리자 화면 ────────────────────────────────────────────────────────
 const 목록 = 읽기(FRONT_ROOT, 'src/pages/manager/orders/trx/[type].js');

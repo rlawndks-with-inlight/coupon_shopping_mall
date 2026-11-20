@@ -64,11 +64,11 @@ t('이력 창: 이력 전 주문은 비어 있다고 알려 준다', 이력창.i
 // ── ⑥ 출고 후 관리자 취소(확인) ────────────────────────────────────────
 t('취소 창: 출고된 주문은 회수 확인 칸을 눌러야 실행 버튼이 열린다',
   취소창.includes('const [회수확인, set회수확인] = useState(false);')
-  && 취소창.includes("disabled={busy || !(state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) || !state?.partial_supported || !고른줄.length}")
+  && 취소창.includes("!(state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) || !state?.partial_supported || !고른줄.length")
   && 취소창.includes('shipped_confirm: state?.shipped && 회수확인 ? 1 : 0,'));
 t('취소 창: 출고 안내가 있고 창을 열 때마다 확인이 풀린다', 취소창.includes('출고된 주문입니다.') && 취소창.includes('set회수확인(false);'));
 t('취소 창: 고른 것이 없으면 「0원 취소하기」 라고 적지 않는다(결제완료 주문을 0원에 취소하는 말로 읽힌다)',
-  취소창.includes('{실행글()}')
+  취소창.includes('실행글()')
   && 취소창.includes("if (회수잠금) return '회수 확인 후 취소할 수 있습니다';")
   && 취소창.includes("if (!고른줄.length) return '취소할 상품과 수량을 고르세요';")
   && 취소창.includes("{고른줄.length ? `${commarNumber(예상액)}원` : '—'}"));

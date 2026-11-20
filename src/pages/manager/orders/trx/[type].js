@@ -22,7 +22,7 @@ import _ from 'lodash';
 import { getOptionLabel } from 'src/utils/shop-util';
 import { 엑셀내려받기 } from 'src/utils/excel';
 import OrderExcelDialog from 'src/components/manager/OrderExcelDialog';
-import { 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸 } from 'src/components/manager/OrderColumns';
+import { 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸, 살아있는주문, 보낼수량, 부분취소있음 } from 'src/components/manager/OrderColumns';
 import { 메뉴상태 } from 'src/utils/order-excel-filter';
 import InvoiceExcelDialog, { 송장엑셀사용 } from 'src/components/manager/InvoiceExcelDialog';
 import axios from 'axios';
@@ -414,7 +414,8 @@ const TrxList = () => {
         if (Number(row?.trx_status) < 0) return <div style={{ color: '#999', whiteSpace: 'nowrap' }}>결제실패/미완료</div>;
         // 포스페이 승인 전 — 예전엔 드롭다운이 열려 있어 결제된 주문과 구분되지 않았다(본사 50 이상은 그대로 둔다).
         if (!마스터 && 포스페이미승인(row)) return <div style={{ color: '#999', whiteSpace: 'nowrap' }}>결제 미완료</div>;
-        return <Select
+        // 일부 상품이 취소된 주문 — 주문 상태(결제완료 등) 아래에 「부분취소」를 붙인다(11/20). 주문은 살아 있어 남은 상품은 보낸다.
+        return <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}><Select
           size="small"
           // 값은 저장된 상태 그대로(확인 팝업에서 취소하면 그대로 남는다). 바꾸면 저장 뒤 목록을 다시 읽는다.
           value={row?.trx_status}
@@ -444,6 +445,12 @@ const TrxList = () => {
           <MenuItem value={20}>{'배송중'}</MenuItem>
           <MenuItem value={25}>{'배송완료'}</MenuItem>
         </Select>
+        {부분취소있음(row) &&
+          <span style={{ fontSize: '11.5px', fontWeight: 700, lineHeight: '18px', padding: '0 6px', borderRadius: '4px', background: '#fff1dc', color: '#a85b00', whiteSpace: 'nowrap' }}>부분취소</span>}
+        {/* 일부 상품만 취소요청한 주문 — 상태는 그대로(결제완료 등)라 따로 알린다. 「주문취소관리 › 취소요청」에서 처리한다(11/20) */}
+        {Number(row?.trx_status) !== 1 && Number(row?.cancel_request_count) > 0 &&
+          <span style={{ fontSize: '11.5px', fontWeight: 700, lineHeight: '16px', padding: '0 6px', borderRadius: '4px', border: '1px solid #e7a3a3', color: '#c23b3b', whiteSpace: 'nowrap' }}>일부 취소요청</span>}
+        </div>
       },
       sx: (row) => {
         return {
@@ -627,7 +634,10 @@ const TrxList = () => {
     const 옵션 = (o?.groups ?? [])
       .map((g) => `${g?.group_name}: ${(g?.options ?? []).map(getOptionLabel).filter(Boolean).join(' / ')}`)
       .filter(Boolean).join(' | ');
-    return `${i + 1}. ${o?.order_name ?? ''}${옵션 ? ` (${옵션})` : ''} × ${o?.order_count ?? 1}`;
+    // 부분취소된 줄은 보낼 수량을 적고 원래 수량·취소 수량을 덧붙인다(OrderColumns.js 보낼수량, 2026-11-20)
+    const 취소 = 살아있는주문(row) ? Number(o?.cancel_count) || 0 : 0;
+    const 꼬리 = 취소 <= 0 ? '' : 보낼수량(row, o) === 0 ? ` (주문 ${o?.order_count}개 모두 취소)` : ` (주문 ${o?.order_count}개 중 ${취소}개 취소)`;
+    return `${i + 1}. ${o?.order_name ?? ''}${옵션 ? ` (${옵션})` : ''} × ${보낼수량(row, o)}${꼬리}`;
   }).join('\n');
 
   const 입력정보글 = (row) => (row?.order_forms ?? [])
@@ -641,8 +651,10 @@ const TrxList = () => {
     { label: '구매자연락처', width: 16, value: (r) => r?.buyer_phone ?? '' },
     { label: '주문상품', width: 46, value: 줄글 },
     // 표의 「수량」 칸처럼 주문 줄 수량의 합
-    { label: '수량', width: 8, value: (r) => (r?.orders ?? []).reduce((s, o) => s + (Number(o?.order_count) || 0), 0) },
+    { label: '수량', width: 8, value: (r) => (r?.orders ?? []).reduce((s, o) => s + 보낼수량(r, o), 0) },
     { label: '결제금액', width: 12, value: (r) => Number(r?.amount) || 0 },
+    // 표의 금액 칸 아래 빨간 「부분취소 −n원」
+    { label: '부분취소 환불액', width: 14, value: (r) => (Number(r?.partial_refund) > 0 ? Number(r.partial_refund) : '') },
     { label: '주문번호', width: 22, value: (r) => r?.ord_num ?? '' },
     { label: '승인번호', width: 14, value: (r) => r?.appr_num ?? '' },
     // 표의 「구매시간」과 같은 값 — 승인 시각, 승인 전(결제대기 등)이면 주문 접수 시각(OrderColumns.js 구매시간칸)
@@ -656,7 +668,7 @@ const TrxList = () => {
     { label: '결제타입', width: 16, value: (r) => trxMethodLabel(r?.trx_method) ?? '' },
     { label: '송장번호', width: 18, value: (r) => r?.invoice_num ?? '' },
     { label: '상태', width: 12, value: (r) => (포스페이미승인(r) ? '결제 미완료' : getOrderStatusText(r)) },
-    { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : '') },
+    { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : 부분취소있음(r) ? '부분취소' : '') + (!(r?.is_cancel == 1 || r?.is_cancel_trans == 1) && Number(r?.trx_status) !== 1 && Number(r?.cancel_request_count) > 0 ? `${부분취소있음(r) ? ' · ' : ''}일부 취소요청` : '') },
     { label: '취소시간', width: 20, value: (r) => r?.cancelled_at ?? '' },
     // 제주·도서산간 추가배송비(2026-11-12) — 주문할 때 저장된 값. 금액 열의 배송비에 이미 들어 있다.
     { label: '추가배송비 지역', width: 14, value: (r) => (Number(r?.island_fee) > 0 ? (r?.island_region === 'jeju' ? '제주' : r?.island_region === 'island' ? '도서산간' : '') : '') },

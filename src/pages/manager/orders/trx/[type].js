@@ -655,8 +655,13 @@ const TrxList = () => {
     { label: '결제금액', width: 12, value: (r) => Number(r?.amount) || 0 },
     // 표의 금액 칸 아래 빨간 「부분취소 −n원」
     { label: '부분취소 환불액', width: 14, value: (r) => (Number(r?.partial_refund) > 0 ? Number(r.partial_refund) : '') },
+    // 표의 「환불 n원 + nP」의 포인트 몫과 「남은 금액」(2026-11-21). 남은 금액 = 결제금액 − 부분취소 환불액(현금)
+    { label: '부분취소 포인트 환불', width: 14, value: (r) => (Number(r?.partial_refund_point) > 0 ? Number(r.partial_refund_point) : '') },
+    { label: '부분취소 후 남은 금액', width: 14, value: (r) => (Number(r?.partial_refund) > 0 ? Math.max(0, (Number(r?.amount) || 0) - Number(r.partial_refund)) : '') },
     { label: '주문번호', width: 22, value: (r) => r?.ord_num ?? '' },
     { label: '승인번호', width: 14, value: (r) => r?.appr_num ?? '' },
+    // 표의 주문번호 아래 「여러 곳 배송 · 결제번호」 — 같은 값이면 한 번에 결제한 주문이다(2026-11-21)
+    { label: '여러 곳 배송 결제번호', width: 22, value: (r) => r?.pay_group ?? '' },
     // 표의 「구매시간」과 같은 값 — 승인 시각, 승인 전(결제대기 등)이면 주문 접수 시각(OrderColumns.js 구매시간칸)
     { label: '구매시간', width: 20, value: (r) => `${r?.trx_dt ?? ''} ${r?.trx_tm ?? ''}`.trim() || (r?.created_at ?? '') },
     { label: '받는사람', width: 12, value: (r) => r?.receiver ?? '' },
@@ -669,7 +674,8 @@ const TrxList = () => {
     { label: '송장번호', width: 18, value: (r) => r?.invoice_num ?? '' },
     { label: '상태', width: 12, value: (r) => (포스페이미승인(r) ? '결제 미완료' : getOrderStatusText(r)) },
     { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : 부분취소있음(r) ? '부분취소' : '') + (!(r?.is_cancel == 1 || r?.is_cancel_trans == 1) && Number(r?.trx_status) !== 1 && Number(r?.cancel_request_count) > 0 ? `${부분취소있음(r) ? ' · ' : ''}일부 취소요청` : '') },
-    { label: '취소시간', width: 20, value: (r) => r?.cancelled_at ?? '' },
+    // 전체취소는 취소 시각, 일부만 취소한 주문은 마지막으로 부분취소한 시각(서버 부분취소정보붙이기, 2026-11-21)
+    { label: '취소시간', width: 20, value: (r) => r?.cancelled_at || r?.partial_cancelled_at || '' },
     // 제주·도서산간 추가배송비(2026-11-12) — 주문할 때 저장된 값. 금액 열의 배송비에 이미 들어 있다.
     { label: '추가배송비 지역', width: 14, value: (r) => (Number(r?.island_fee) > 0 ? (r?.island_region === 'jeju' ? '제주' : r?.island_region === 'island' ? '도서산간' : '') : '') },
     { label: '추가배송비', width: 12, value: (r) => (Number(r?.island_fee) > 0 ? Number(r.island_fee) : '') },

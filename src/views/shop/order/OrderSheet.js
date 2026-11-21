@@ -97,6 +97,8 @@ export default function OrderSheet({ router }) {
   //    '아직 국가를 안 고름('')' 과 '국내(KR)' 는 다른 상태다.
   const [addrMode, setAddrMode] = useState('KR'); // 'KR' | 'OVERSEAS'
   const isKR = addrMode === 'KR';
+  // 「여러 곳으로 배송」을 켜기 전의 국내/해외 — 끄면 한 곳 배송 칸을 이 방식으로 되돌린다(켤 때 KR 로 바꾼다)
+  const 켜기전주소방식 = useRef(null);
   const { user } = useAuthContext();
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   // thegrazia(74)만 개인통관고유부호를 주문서에서 받는다(해외직구).
@@ -1257,7 +1259,9 @@ export default function OrderSheet({ router }) {
                 <CardContent>
                   {/* 한 곳 / 여러 곳 고르기. 처음엔 작은 체크칸이었는데 「주문자와 동일」 같은 보조 옵션처럼 보여
                       지나치기 쉽고 휴대폰에서 누르기 작았다(사장님 11/20) — 배송지 칸 맨 위에 꽉 찬 너비의 두 단추로 둔다. */}
-                  {여러곳가능 && (
+                  {/* 되살린 「여러 곳」 상태인데 그사이 몰에서 꺼졌으면(여러곳가능=false) 단추가 사라져 한 곳으로 돌아갈 수 없었다 —
+                      켜져 있는 동안은 단추를 계속 보인다 */}
+                  {(여러곳가능 || 여러곳) && (
                     <Box sx={{ mb: 2.5 }}>
                       <ToggleButtonGroup exclusive fullWidth color="primary" value={여러곳 ? 'multi' : 'one'}
                         onChange={(e, v) => {
@@ -1266,10 +1270,15 @@ export default function OrderSheet({ router }) {
                           if (켬 === 여러곳) return;
                           set여러곳(켬);
                           if (켬) {
-                            set곳들(처음곳들(payData, products));
+                            // 여러 곳 배송은 국내만이다. 해외 배송지를 고른 채 켜면 외국 주소가 1번 배송지로 들어갔다 — 받는 분·연락처만 옮긴다
+                            set곳들(처음곳들(isKR ? payData : { receiver: payData?.receiver, addr_phone: payData?.addr_phone }, products));
+                            켜기전주소방식.current = addrMode;
                             setAddrMode('KR');
                             if (Number(payData?.use_point) > 0) setPayData({ ...payData, use_point: 0 });
                             if (buyType && buyType != 'auth_forspay') { setBuyType(undefined); setBuyPayMethod(undefined); }
+                          } else {
+                            // 한 곳 배송 칸에 남아 있는 주소(해외일 수 있다)와 국내/해외가 어긋나지 않게 켜기 전 방식으로
+                            setAddrMode(켜기전주소방식.current ?? (isDomestic(payData?.country_code) ? 'KR' : 'OVERSEAS'));
                           }
                         }}>
                         <ToggleButton value="one" sx={{ minHeight: 52, gap: 0.75, wordBreak: 'keep-all', lineHeight: 1.3 }}>
@@ -1282,6 +1291,11 @@ export default function OrderSheet({ router }) {
                           {translate('여러 곳으로 배송')}
                         </ToggleButton>
                       </ToggleButtonGroup>
+                      {여러곳 && !여러곳가능 && (
+                        <Typography variant="caption" sx={{ color: 'error.main', display: 'block', mt: 0.75, wordBreak: 'keep-all' }}>
+                          {translate('이 쇼핑몰에서는 여러 곳으로 배송할 수 없습니다.')}
+                        </Typography>
+                      )}
                       {!여러곳 && (
                         <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.75, wordBreak: 'keep-all' }}>
                           {translate('받는 분이 여럿이면 한 번 결제로 최대 {{n}}곳까지 보낼 수 있습니다.', { n: 최대곳 })}

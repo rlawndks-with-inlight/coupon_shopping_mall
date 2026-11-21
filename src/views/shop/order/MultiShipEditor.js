@@ -4,6 +4,7 @@ import Iconify from 'src/components/iconify/Iconify';
 import { useLocales } from 'src/locales';
 import { calcOrderTotals, isAddonLine, getOptionLabel, 배송정책, 섬안내문 } from 'src/utils/shop-util';
 import { commarNumberWithUnit, sanitizePhoneInput } from 'src/utils/function';
+import { formatLang } from 'src/utils/format';
 
 // 여러 곳으로 배송 — 주문서의 배송지 칸(2026-11-20).
 //
@@ -81,9 +82,10 @@ export const 똑같이나누기 = (곳들, products) => (곳들 ?? []).map((곳,
 }));
 
 // 줄 이름 — 상품명 · 고른 옵션. 추가상품 표시는 화면 언어로(t = translate).
-const 줄이름 = (p, t = (x) => x) => {
+//   상품명도 화면 언어로(장바구니 CheckoutCartProduct 와 같은 formatLang, 2026-11-22) — 외국어 화면에서 이 칸만 한국어였다.
+const 줄이름 = (p, t = (x) => x, lang) => {
   const 옵션 = (p?.groups ?? []).flatMap((g) => (g?.options ?? []).map(getOptionLabel)).filter(Boolean).join(' / ');
-  return `${p?.product_name ?? ''}${isAddonLine(p) ? ` (${t('추가상품')})` : ''}${옵션 ? ` · ${옵션}` : ''}`;
+  return `${formatLang(p, 'product_name', lang) ?? p?.product_name ?? ''}${isAddonLine(p) ? ` (${t('추가상품')})` : ''}${옵션 ? ` · ${옵션}` : ''}`;
 };
 
 export default function MultiShipEditor({ products, 곳들, set곳들, 방식, set방식, on우편번호, isValidPhone, addressList = [] }) {
@@ -162,8 +164,8 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
               {products.map((p, i) => 남음[i] !== 0 && (
                 <Typography key={i} variant="body2" sx={{ color: 'warning.darker' }}>
                   {남음[i] > 0
-                    ? translate('「{{name}}」 {{n}}개를 아직 배송지에 나누지 않았습니다.', { name: 줄이름(p, translate), n: 남음[i] })
-                    : translate('「{{name}}」을(를) 주문 수량보다 많이 나눴습니다.', { name: 줄이름(p, translate) })}
+                    ? translate('「{{name}}」 {{n}}개를 아직 배송지에 나누지 않았습니다.', { name: 줄이름(p, translate, currentLang), n: 남음[i] })
+                    : translate('「{{name}}」을(를) 주문 수량보다 많이 나눴습니다.', { name: 줄이름(p, translate, currentLang) })}
                 </Typography>
               ))}
             </Box>
@@ -241,7 +243,7 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
                       const 지금 = Number(곳.수량?.[i]) || 0;
                       return (
                         <Stack key={i} direction="row" alignItems="center" spacing={0.5} sx={{ ...(isAddonLine(p) ? { pl: 1.5 } : {}) }}>
-                          <Typography variant="body2" sx={{ flexGrow: 1, minWidth: 0, wordBreak: 'keep-all', color: 지금 ? 'text.primary' : 'text.secondary' }}>{줄이름(p, translate)}</Typography>
+                          <Typography variant="body2" sx={{ flexGrow: 1, minWidth: 0, wordBreak: 'keep-all', color: 지금 ? 'text.primary' : 'text.secondary' }}>{줄이름(p, translate, currentLang)}</Typography>
                           <IconButton size="small" disabled={지금 <= 0} onClick={() => 수량바꾸기(k, i, 지금 - 1)} aria-label={translate('빼기')}><Iconify icon="eva:minus-fill" /></IconButton>
                           {/* 숫자를 바로 칠 수 있다 — 30개를 +로 서른 번 누르게 하지 않는다 */}
                           <TextField size="small" value={지금} onChange={(e) => 수량바꾸기(k, i, e.target.value)}

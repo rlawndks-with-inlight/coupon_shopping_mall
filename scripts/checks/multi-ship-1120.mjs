@@ -137,11 +137,11 @@ t('⑧ 결제실패/미완료는 묶음을 첫 주문 한 줄로 접고 「몇 �
   && /pay_group IS NULL OR \$\{t\}\.ord_num = \$\{t\}\.pay_group/.test(pg) && /배송지 \{row\.group_count\}곳 · 합계/.test(앞('src/components/manager/OrderColumns.js')));
 
 // 11/20 저녁 — 이름은 「여러 곳으로 배송」(11/21 선물 등 뺌), 작은 체크칸 대신 꽉 찬 두 단추, 1개만 담으면 나눠 보내기 막기
-const 고르기 = 주문서.slice(주문서.indexOf('{여러곳가능 && ('), 주문서.indexOf('{여러곳 ? ('));
+const 고르기 = 주문서.slice(주문서.indexOf('{(여러곳가능 || 여러곳) && ('), 주문서.indexOf('{여러곳 ? ('));
 t('⑨ 한 곳/여러 곳은 꽉 찬 두 단추(작은 체크칸 아님)', /<ToggleButtonGroup exclusive fullWidth/.test(고르기) && !/Checkbox/.test(고르기)
   && /minHeight: 52/.test(고르기) && /translate\('한 곳으로 배송'\)/.test(고르기) && /translate\('여러 곳으로 배송'\)/.test(고르기));
 t('⑨ 꺼져 있을 때 무엇을 할 수 있는지 한 줄 안내', /\{!여러곳 && \(/.test(고르기) && /최대 \{\{n\}\}곳까지 보낼 수 있습니다/.test(고르기));
-t('⑨ 켤 때 하던 일(배송지 준비·국내·포인트 0·포스페이 아닌 결제수단 해제)은 그대로', /set곳들\(처음곳들\(payData, products\)\)/.test(고르기) && /setAddrMode\('KR'\)/.test(고르기)
+t('⑨ 켤 때 하던 일(배송지 준비·국내·포인트 0·포스페이 아닌 결제수단 해제)은 그대로', /set곳들\(처음곳들\(isKR \? payData : /.test(고르기) && /setAddrMode\('KR'\)/.test(고르기)
   && /use_point: 0/.test(고르기) && /buyType != 'auth_forspay'/.test(고르기));
 t('⑨ 1개만 담으면 나눠 보내기를 못 누르고, 나눠 보내기 중 1개가 되면 같은 상품 보내기로', /const 나눔가능 = 담은개수 >= 2;/.test(편집)
   && /<ToggleButton value="split" disabled=\{!나눔가능\}>/.test(편집) && /if \(!나눔가능 && 방식 === 'split'\) set방식\('same'\)/.test(편집));
@@ -172,6 +172,30 @@ t('⑨ 옛 이름 「여러 곳으로 보내기」가 남지 않는다', ![주�
     /SELECT pay_group FROM transactions WHERE id=\?/.test(상태) && /trx\.pay_group = /.test(상태));
   t('⑩ 부분취소의 PG 취소·포스페이 대조는 그 trx 의 결제주문번호를 쓴다',
     /pgCancel: async \(\{ trx, amount \}\)[\s\S]{0,300}ord_num: 결제주문번호\(trx\)/.test(pay) && /pgPrecheck: async \(\{ trx, 이미현금 \}\) => 포스페이취소대조\(trx, 이미현금\)/.test(pay));
+}
+
+// 11/22 점검(11/20~21 배포분 다시 보기)에서 나온 것
+{
+  const 처음 = 편집.slice(편집.indexOf('export const 처음곳들'), 편집.indexOf('export const 곳의줄'));
+  t('⑫ 해외 배송지를 고른 채 켜면 주소는 옮기지 않는다(받는 분·연락처만) — 여러 곳 배송은 국내만',
+    /set곳들\(처음곳들\(isKR \? payData : \{ receiver: payData\?\.receiver, addr_phone: payData\?\.addr_phone \}, products\)\)/.test(고르기)
+    && /addr: payData\?\.addr/.test(처음));
+  t('⑫ 끄면 켜기 전 국내/해외로 되돌린다(한 곳 배송 칸 주소와 어긋나지 않게)',
+    /const 켜기전주소방식 = useRef\(null\);/.test(주문서) && /켜기전주소방식\.current = addrMode;/.test(고르기)
+    && /setAddrMode\(켜기전주소방식\.current \?\? \(isDomestic\(payData\?\.country_code\) \? 'KR' : 'OVERSEAS'\)\)/.test(고르기));
+  t('⑫ 되살린 여러 곳 상태에서 몰이 꺼져도 한 곳으로 돌아갈 단추가 남고, 쓸 수 없다고 알린다',
+    /\{\(여러곳가능 \|\| 여러곳\) && \(/.test(주문서) && /\{여러곳 && !여러곳가능 && \(/.test(고르기)
+    && /translate\('이 쇼핑몰에서는 여러 곳으로 배송할 수 없습니다\.'\)/.test(고르기)
+    && ['ko', 'en', 'ja', 'cn', 'es'].every((l) => 앞(`src/locales/langs/${l}.js`).includes('"이 쇼핑몰에서는 여러 곳으로 배송할 수 없습니다."')));
+  t('⑫ 편집기 상품명은 화면 언어로(formatLang)',
+    /import \{ formatLang \} from 'src\/utils\/format';/.test(편집) && /formatLang\(p, 'product_name', lang\)/.test(편집)
+    && !/줄이름\(p, translate\)/.test(편집) && (편집.match(/줄이름\(p, translate, currentLang\)/g) ?? []).length === 3);
+  const 정산시작 = pay.indexOf('async function 묶음정산');
+  const 정산 = pay.slice(정산시작, pay.indexOf('if (다됨()) return true;', 정산시작) + 30);
+  t('⑫ 묶음 결제도 뒤늦은 웹훅 카드번호로 빈 칸을 채운다(이미 확정된 줄만, 빈 칸만, 다됨 판정 앞에서)',
+    /const 카드번호 = String\(data\?\.card_num \?\? ''\)\.trim\(\);/.test(정산) && /!r\.card_num/.test(정산)
+    && /UPDATE transactions SET card_num=\? WHERE id IN \([\s\S]{0,80}\) AND \(card_num IS NULL OR card_num=''\)/.test(정산)
+    && 정산.indexOf('const 카드번호') > 0 && 정산.indexOf('const 카드번호') < 정산.indexOf('if (다됨()) return true;'));
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

@@ -214,5 +214,25 @@ t('① 엑셀: 취소여부에 「부분취소」, 부분취소 환불액 열', 
     && (앞('src/components/elements/blog/common.js').match(/<PartialRefundNote row=\{row\} \/>/g) || []).length === 2);
 }
 
+// 11/21 엑셀에 표만큼 싣기(사장님 「다 넣는 게 맞지 않을까?」)
+{
+  const 가이드 = 앞('src/components/manager/guideContent.js');
+  t('⑫ 서버: 마지막 부분취소 시각을 싣는다(부분환불합 at → partial_cancelled_at)',
+    /DATE_FORMAT\(MAX\(created_at\), '%Y-%m-%d %H:%i:%s'\) AS at/.test(cancel) && /at: r\.at \?\? null/.test(cancel)
+    && /t\.partial_cancelled_at = h\.at;/.test(cancel));
+  t('⑫ 서버: 엑셀 「취소완료」에 일부만 취소한 주문도 넣는다(취소완료 탭과 같게, id 목록으로)',
+    /String\(k\) === 'cancelled' \? 주문목록식\(await 부분취소주문\(decode_dns\?\.id\), table_name\) : null;/.test(trxCtrl)
+    && /if \(부분식\) return `\(\$\{엑셀상태조건\[k\]\} OR \$\{부분식\}\)`;/.test(trxCtrl));
+  t('⑫ 엑셀: 포인트 환불·남은 금액(결제금액 − 현금 환불)·여러 곳 배송 결제번호 열',
+    /label: '부분취소 포인트 환불', width: 14, value: \(r\) => \(Number\(r\?\.partial_refund_point\) > 0/.test(목록)
+    && /label: '부분취소 후 남은 금액', width: 14, value: \(r\) => \(Number\(r\?\.partial_refund\) > 0 \? Math\.max\(0, \(Number\(r\?\.amount\) \|\| 0\) - Number\(r\.partial_refund\)\) : ''\)/.test(목록)
+    && /label: '여러 곳 배송 결제번호', width: 22, value: \(r\) => r\?\.pay_group \?\? ''/.test(목록));
+  t('⑫ 엑셀 취소시간: 전체취소 시각, 없으면 마지막 부분취소 시각',
+    /label: '취소시간', width: 20, value: \(r\) => r\?\.cancelled_at \|\| r\?\.partial_cancelled_at \|\| ''/.test(목록));
+  t('⑫ 가이드: 새 열·취소완료에 부분취소 포함·여러 곳 배송은 결제번호 열로',
+    /부분취소 포인트 환불·부분취소 후 남은 금액/.test(가이드) && /「취소완료」를 고르면 전체취소한 주문과 함께 일부만 취소한 주문도 담깁니다/.test(가이드)
+    && /「여러 곳 배송 결제번호」가 같은 주문이 한 번에 결제한 주문입니다/.test(가이드));
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

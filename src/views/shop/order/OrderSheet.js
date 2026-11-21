@@ -1277,8 +1277,9 @@ export default function OrderSheet({ router }) {
                           {translate('한 곳으로 배송')}
                         </ToggleButton>
                         <ToggleButton value="multi" sx={{ minHeight: 52, gap: 0.75, wordBreak: 'keep-all', lineHeight: 1.3 }}>
-                          <Iconify icon="eva:gift-outline" width={20} sx={{ flexShrink: 0 }} />
-                          {translate('여러 곳으로 배송 (선물 등)')}
+                          {/* 이름에서 「(선물 등)」을 뺐다(11/21 팀장 통화) — 선물 상자 아이콘도 함께 뺌 */}
+                          <Iconify icon="eva:share-outline" width={20} sx={{ flexShrink: 0 }} />
+                          {translate('여러 곳으로 배송')}
                         </ToggleButton>
                       </ToggleButtonGroup>
                       {!여러곳 && (

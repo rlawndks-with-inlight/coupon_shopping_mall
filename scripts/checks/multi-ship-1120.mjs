@@ -136,16 +136,43 @@ t('⑧ 결제실패/미완료는 묶음을 첫 주문 한 줄로 접고 「몇 �
   && /String\(k\) === 'failed' && await hasColumn\('transactions', 'pay_group'\)/.test(백('controllers/transaction.controller.js'))
   && /pay_group IS NULL OR \$\{t\}\.ord_num = \$\{t\}\.pay_group/.test(pg) && /배송지 \{row\.group_count\}곳 · 합계/.test(앞('src/components/manager/OrderColumns.js')));
 
-// 11/20 저녁 — 이름은 「여러 곳으로 배송 (선물 등)」, 작은 체크칸 대신 꽉 찬 두 단추, 1개만 담으면 나눠 보내기 막기
+// 11/20 저녁 — 이름은 「여러 곳으로 배송」(11/21 선물 등 뺌), 작은 체크칸 대신 꽉 찬 두 단추, 1개만 담으면 나눠 보내기 막기
 const 고르기 = 주문서.slice(주문서.indexOf('{여러곳가능 && ('), 주문서.indexOf('{여러곳 ? ('));
 t('⑨ 한 곳/여러 곳은 꽉 찬 두 단추(작은 체크칸 아님)', /<ToggleButtonGroup exclusive fullWidth/.test(고르기) && !/Checkbox/.test(고르기)
-  && /minHeight: 52/.test(고르기) && /translate\('한 곳으로 배송'\)/.test(고르기) && /translate\('여러 곳으로 배송 \(선물 등\)'\)/.test(고르기));
+  && /minHeight: 52/.test(고르기) && /translate\('한 곳으로 배송'\)/.test(고르기) && /translate\('여러 곳으로 배송'\)/.test(고르기));
 t('⑨ 꺼져 있을 때 무엇을 할 수 있는지 한 줄 안내', /\{!여러곳 && \(/.test(고르기) && /최대 \{\{n\}\}곳까지 보낼 수 있습니다/.test(고르기));
 t('⑨ 켤 때 하던 일(배송지 준비·국내·포인트 0·포스페이 아닌 결제수단 해제)은 그대로', /set곳들\(처음곳들\(payData, products\)\)/.test(고르기) && /setAddrMode\('KR'\)/.test(고르기)
   && /use_point: 0/.test(고르기) && /buyType != 'auth_forspay'/.test(고르기));
 t('⑨ 1개만 담으면 나눠 보내기를 못 누르고, 나눠 보내기 중 1개가 되면 같은 상품 보내기로', /const 나눔가능 = 담은개수 >= 2;/.test(편집)
   && /<ToggleButton value="split" disabled=\{!나눔가능\}>/.test(편집) && /if \(!나눔가능 && 방식 === 'split'\) set방식\('same'\)/.test(편집));
+t('⑨ 단추 순서는 나눠 보내기 먼저, 기본 선택은 같은 상품 보내기(11/21)', 편집.indexOf('<ToggleButton value="split"') > 0 && 편집.indexOf('<ToggleButton value="split"') < 편집.indexOf('<ToggleButton value="same"')
+  && /const \[보내는방식, set보내는방식\] = useState\('same'\);/.test(주문서));
 t('⑨ 옛 이름 「여러 곳으로 보내기」가 남지 않는다', ![주문서, 편집, 설정, pay].some((x) => /여러 곳으로 보내기/.test(x)));
+
+// 11/21 팀장 통화 — 이름 「여러 곳으로 배송」(선물 등 뺌), 단추 「주문 상품 나눠보내기 / 주문 상품 묶어보내기」
+{
+  const 사전들 = ['ko', 'en', 'ja', 'cn', 'es'].map((l) => 앞(`src/locales/langs/${l}.js`));
+  const 가이드 = 앞('src/components/manager/guideContent.js');
+  t('⑪ 단추 이름은 주문 상품 나눠보내기 · 주문 상품 묶어보내기',
+    /<ToggleButton value="split" disabled=\{!나눔가능\}>\{translate\('주문 상품 나눠보내기'\)\}/.test(편집) && /<ToggleButton value="same">\{translate\('주문 상품 묶어보내기'\)\}/.test(편집)
+    && /translate\('주문 상품 나눠보내기'\)\}: \{translate\('2개 이상 담았을 때 쓸 수 있습니다\.'\)/.test(편집));
+  t('⑪ 「선물 등」·선물 상자 아이콘·옛 단추 이름이 화면·사전·가이드에 남지 않는다',
+    ![주석뺌(주문서), 주석뺌(편집), 가이드, ...사전들].some((x) => /선물 등|담은 수량 나눠 보내기|모두 같은 상품 보내기/.test(x)) && !/eva:gift/.test(주석뺌(주문서)));
+  t('⑪ 새 이름 3개가 5개 언어 사전에 모두 있다',
+    사전들.every((x) => ['주문 상품 나눠보내기', '주문 상품 묶어보내기', '여러 곳으로 배송'].every((k) => x.includes(`  "${k}": "`))));
+  t('⑪ 가이드도 새 단추 이름으로 설명한다', /「주문 상품 나눠보내기」로 주문 수량을 배송지에 나눠 보내거나, 「주문 상품 묶어보내기」로/.test(가이드));
+}
+
+// 11/21 포스몰 실주문 — 둘째 배송지(G-2) 부분취소가 포스페이 「1000 Not found」로 막혔다.
+//   부분취소는 getCancelState 의 trx 로 포스페이를 부르는데 거기서 pay_group 을 안 읽어 자기 주문번호(G-2)로 불렀다.
+{
+  const 취소 = 백('utils.js/cancel.js');
+  const 상태 = 취소.slice(취소.indexOf('export const getCancelState'), 취소.indexOf('const [rows] = await readPool.query', 취소.indexOf('export const getCancelState')));
+  t('⑩ 부분취소가 읽는 주문(getCancelState)에 결제 묶음 번호가 실린다 — 둘째 배송지부터 묶음 번호로 포스페이를 부르게',
+    /SELECT pay_group FROM transactions WHERE id=\?/.test(상태) && /trx\.pay_group = /.test(상태));
+  t('⑩ 부분취소의 PG 취소·포스페이 대조는 그 trx 의 결제주문번호를 쓴다',
+    /pgCancel: async \(\{ trx, amount \}\)[\s\S]{0,300}ord_num: 결제주문번호\(trx\)/.test(pay) && /pgPrecheck: async \(\{ trx, 이미현금 \}\) => 포스페이취소대조\(trx, 이미현금\)/.test(pay));
+}
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

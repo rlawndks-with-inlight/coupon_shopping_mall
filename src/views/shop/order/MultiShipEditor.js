@@ -126,12 +126,13 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
           }
           set방식(v);
         }}>
-        <ToggleButton value="same">{translate('모두 같은 상품 보내기')}</ToggleButton>
-        <ToggleButton value="split" disabled={!나눔가능}>{translate('담은 수량 나눠 보내기')}</ToggleButton>
+        {/* 나눠보내기를 앞에(사장님 11/21). 기본 선택은 그대로 묶어보내기(same). 단추 이름은 11/21 팀장 통화로 정함. */}
+        <ToggleButton value="split" disabled={!나눔가능}>{translate('주문 상품 나눠보내기')}</ToggleButton>
+        <ToggleButton value="same">{translate('주문 상품 묶어보내기')}</ToggleButton>
       </ToggleButtonGroup>
       {!나눔가능 && (
         <Typography variant="caption" sx={{ color: 'text.secondary', mt: -1.25, wordBreak: 'keep-all' }}>
-          {translate('담은 수량 나눠 보내기')}: {translate('2개 이상 담았을 때 쓸 수 있습니다.')}
+          {translate('주문 상품 나눠보내기')}: {translate('2개 이상 담았을 때 쓸 수 있습니다.')}
         </Typography>
       )}
       <Box>

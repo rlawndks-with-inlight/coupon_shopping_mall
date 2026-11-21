@@ -117,7 +117,14 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
 
   return (
     <Stack spacing={2}>
-      <ToggleButtonGroup exclusive size="small" value={방식} sx={{ flexWrap: 'wrap' }}
+      {/* 두 탭 사이를 살짝 띄운다(사장님 11/21). MUI 기본은 둘째 단추를 왼쪽으로 1px 당겨 붙이고,
+          고르지 않은 단추는 테두리가 없어 글자와 고른 탭이 붙어 보였다 — 탭마다 옅은 테두리를 두고 8px 띄운다. */}
+      <ToggleButtonGroup exclusive size="small" value={방식}
+        sx={{
+          flexWrap: 'wrap',
+          '& .MuiToggleButtonGroup-grouped': { border: '1px solid', borderColor: (t) => `${t.palette.divider} !important`, px: 1.5 },
+          '& .MuiToggleButtonGroup-grouped:not(:first-of-type)': { ml: 1, borderLeft: '1px solid' },
+        }}
         onChange={(e, v) => {
           if (!v || v === 방식) return;
           // 나눠 보내기로 바꿀 때 아직 나눈 적이 없으면 모두 1번 배송지에 담아 둔다

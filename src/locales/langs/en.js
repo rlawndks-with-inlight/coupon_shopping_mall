@@ -1206,6 +1206,8 @@ const en = {
   // 송장 엑셀 등록(관리자, 2026-11-12) — transaction.controller 메시지라 검사가 사전을 요구한다
   "올린 파일에서 주문을 찾지 못했습니다. 「주문번호」와 「송장번호」 칸이 있는지 확인해 주세요.": "Couldn't find any orders in the uploaded file. Please check that it has the 「주문번호」 (order number) and 「송장번호」 (tracking number) columns.",
   "한 번에 1,000줄까지 올릴 수 있습니다. 나눠서 올려 주세요.": "You can upload up to 1,000 rows at a time. Please split the file and upload again.",
+  "칸에 입력한 내용이 너무 깁니다. 줄여서 다시 저장해 주세요.": "is too long. Please shorten it and save again.",
+  "입력한 내용 중 너무 긴 항목이 있습니다. 줄여서 다시 저장해 주세요.": "Some of what you entered is too long. Please shorten it and save again.",
 };
 
 export default en;

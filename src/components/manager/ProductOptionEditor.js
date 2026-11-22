@@ -40,6 +40,20 @@ const 도움말 = (t) => <Typography sx={{ fontSize: 12, color: 'text.disabled',
 const 음수막기 = (v) => (String(v ?? '').trim() === '' ? '' : String(Math.max(0, parseInt(v) || 0)));
 const 음수막기속성 = { inputProps: { min: 0 } };
 
+// 상품 정보(특성) 글자 수 — DB 칸 크기(항목 VARCHAR(100), 내용 VARCHAR(1000))와 같다.
+//   백엔드 product.controller.js 특성최대 와 짝이다. 칸을 늘리면 셋을 같이 바꿀 것.
+// 글자는 DB 처럼 코드포인트로 센다(이모지 하나 = 1자). maxLength 는 쓰지 않는다 —
+//   붙여 넣은 글이 1,000자에서 소리 없이 잘려 버리므로, 넘치면 빨갛게 알리고 저장할 때 막는다.
+export const 특성최대 = { 항목: 100, 내용: 1000 };
+export const 글자수 = (v) => Array.from(String(v ?? '')).length;
+// 짧은 값(「국내산」)에 「3/1,000」을 달면 줄마다 높이만 늘어난다 — 길어질 때부터 보인다.
+const 글자수표시 = (v, 최대) => {
+    const n = 글자수(v);
+    if (n > 최대) return { error: true, helperText: `${n.toLocaleString()} / ${최대.toLocaleString()}자 · ${최대.toLocaleString()}자까지 넣을 수 있습니다` };
+    if (n >= Math.min(100, 최대 * 0.8)) return { helperText: `${n.toLocaleString()} / ${최대.toLocaleString()}자` };
+    return {};
+};
+
 const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
     // '손님이 적는 항목' 은 본사가 브랜드마다 켜 주는 기능이다(설정관리 › 데모설정).
     // 켜지 않은 몰에서는 이 구역 자체를 감춘다 — 기본값은 꺼짐이다.
@@ -616,16 +630,21 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                 {라벨('상품 정보')}
                 {도움말('원산지·제조사처럼 보여주기만 하는 내용입니다. 손님이 고르는 것이 아닙니다. 고르게 하려면 위의 선택 옵션을 쓰세요.')}
                 {characters.map((c, idx) => c?.is_delete == 1 ? null : (
-                    <Row key={c?.id ?? idx} style={{ columnGap: '0.5rem' }}>
+                    // 내용 칸이 여러 줄로 늘어나도 항목 칸·지우기 단추는 윗줄에 붙어 있게 한다
+                    <Row key={c?.id ?? idx} style={{ columnGap: '0.5rem', alignItems: 'flex-start' }}>
                         <TextField
-                            disabled={disabled} sx={{ flexGrow: 1 }} size="small" label="항목" placeholder="예시) 원산지"
+                            disabled={disabled} sx={{ flex: '1 1 0', minWidth: 0 }} size="small" label="항목" placeholder="예시) 원산지"
                             value={c?.character_name ?? ''}
                             onChange={(e) => 특성수정(idx, { character_name: e.target.value })}
+                            {...글자수표시(c?.character_name, 특성최대.항목)}
                         />
+                        {/* 식품 정보고시 「원재료명 및 함량」처럼 긴 내용이 들어간다 — 여러 줄 칸, 1,000자까지 */}
                         <TextField
-                            disabled={disabled} sx={{ flexGrow: 1 }} size="small" label="내용" placeholder="예시) 국내산"
+                            disabled={disabled} sx={{ flex: '2 1 0', minWidth: 0 }} size="small" label="내용" placeholder="예시) 국내산"
+                            multiline maxRows={8}
                             value={c?.character_value ?? ''}
                             onChange={(e) => 특성수정(idx, { character_value: e.target.value })}
+                            {...글자수표시(c?.character_value, 특성최대.내용)}
                         />
                         <IconButton sx={숨김} onClick={() => 특성삭제(idx)}>
                             <Icon icon="material-symbols:delete-outline" />

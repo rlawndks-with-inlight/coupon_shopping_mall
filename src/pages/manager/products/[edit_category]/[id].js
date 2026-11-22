@@ -24,7 +24,7 @@ import { styled as muiStyle } from '@mui/material'
 import dynamic from 'next/dynamic'
 import { ProductDetailsCarousel } from "src/views/@dashboard/e-commerce/details";
 import { SkeletonProductDetails } from "src/components/skeleton";
-import ProductOptionEditor from 'src/components/manager/ProductOptionEditor';
+import ProductOptionEditor, { 특성최대, 글자수 } from 'src/components/manager/ProductOptionEditor';
 import { 금액표시, 금액입력 } from 'src/utils/money-input'
 
 // 옵션 개편분을 저장 요청에 싣는다.
@@ -1013,6 +1013,15 @@ const ProductEdit = () => {
     for (const c of liveCharacters) {
       if (!String(c?.character_name ?? '').trim() || !String(c?.character_value ?? '').trim()) {
         toast.error('특성의 이름과 값을 모두 입력해 주세요. (비워두면 저장되지 않습니다)');
+        return;
+      }
+      // DB 칸보다 길면 서버가 거절한다 — 저장 단추를 누른 자리에서 어느 줄인지 알려 준다(서버도 같은 기준으로 막는다)
+      if (글자수(c?.character_name) > 특성최대.항목) {
+        toast.error(`상품 정보 항목 「${String(c?.character_name).slice(0, 20)}…」이 ${글자수(c?.character_name).toLocaleString()}자입니다. 항목은 ${특성최대.항목}자까지 넣을 수 있습니다.`);
+        return;
+      }
+      if (글자수(c?.character_value) > 특성최대.내용) {
+        toast.error(`상품 정보 「${String(c?.character_name).trim()}」 내용이 ${글자수(c?.character_value).toLocaleString()}자입니다. 내용은 ${특성최대.내용.toLocaleString()}자까지 넣을 수 있습니다.`);
         return;
       }
     }

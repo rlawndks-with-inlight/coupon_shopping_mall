@@ -27,6 +27,12 @@ const serverMessage = (message) => {
     const text = String(message ?? '').trim();
     if (!text) return message;
     try {
+        // 「칸 이름」 + 고정 문장 — 백엔드 서버오류문구(util.js)가 「제목」 칸에 입력한 내용이 너무 깁니다… 처럼 보낸다.
+        // 통째로는 사전에 없으므로 칸 이름과 뒤 문장을 따로 번역한다(사전에 없는 쪽은 원문 그대로).
+        if (!i18n.exists(text)) {
+            const m = text.match(/^「([^」]+)」\s*(.+)$/);
+            if (m && i18n.exists(m[2])) return `「${i18n.t(m[1])}」 ${i18n.t(m[2])}`;
+        }
         return i18n.t(text);
     } catch {
         return message;

@@ -29,12 +29,18 @@ eq('serverMessage 로 감싼 자리', (api.match(/toast\.error\(serverMessage\(/
 // serverMessage 의 동작을 실제로 돌려 본다(i18n 은 가짜로 끼운다)
 const cut = (s, e) => { const i = api.indexOf(s); return api.slice(i, api.indexOf(e, i) + e.length); };
 const make = (dict) => new Function('i18n', `${cut('const serverMessage =', '\n};')}\nreturn serverMessage;`)(
-  { t: (k) => dict[k] ?? k }
+  { t: (k) => dict[k] ?? k, exists: (k) => k in dict }
 );
 const sm = make({ '상품을 찾을 수 없습니다.': 'The product could not be found.' });
 eq('사전에 있으면 번역', sm('상품을 찾을 수 없습니다.'), 'The product could not be found.');
 eq('사전에 없으면 원문 그대로', sm('처음 보는 메시지'), '처음 보는 메시지');
 eq('앞뒤 공백은 다듬는다', sm('  상품을 찾을 수 없습니다.  '), 'The product could not be found.');
+// 「칸 이름」 + 고정 문장(백엔드 서버오류문구, 2026-11-22) — 둘을 따로 번역한다
+const 긴 = '칸에 입력한 내용이 너무 깁니다. 줄여서 다시 저장해 주세요.';
+const sm2 = make({ [긴]: 'is too long. Please shorten it and save again.', '제목': 'Title' });
+eq('「칸」+문장: 둘 다 번역', sm2(`「제목」 ${긴}`), '「Title」 is too long. Please shorten it and save again.');
+eq('「칸」+문장: 칸 이름이 사전에 없으면 그 부분만 원문', sm2(`「상품 정보 항목」 ${긴}`), '「상품 정보 항목」 is too long. Please shorten it and save again.');
+eq('「…」로 시작해도 뒤 문장이 사전에 없으면 통째로 원문', sm2('「제목」 처음 보는 문장'), '「제목」 처음 보는 문장');
 eq('빈 값은 그대로', sm(''), '');
 eq('undefined 도 터지지 않는다', sm(undefined), undefined);
 // i18n 이 던져도 화면이 죽지 않아야 한다

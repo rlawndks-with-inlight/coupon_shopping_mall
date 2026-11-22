@@ -158,7 +158,8 @@ for (const n of [3, 5, 6, 7, 8]) {
 
 // 특성은 보여주기 전용 컴포넌트가 따로 있다
 const info = readFileSync(FRONT + 'src/components/elements/shop/ProductInfoRows.js', 'utf8');
-eq('상품정보는 읽기 전용', /onClick|onChange/.test(info), false);
+// 누를 수 있는 것은 긴 내용 「더보기/접기」 하나뿐이다(2026-11-22) — 값을 고르는 손잡이는 없어야 한다
+eq('상품정보는 읽기 전용', /onChange|onSelect/.test(info) || (info.match(/onClick=/g) ?? []).length !== 1 || !/onClick=\{\(\) => set펼침\(!펼침\)\}/.test(info), false);
 
 // ── 관리자 화면 ────────────────────────────────────────────────────────────
 const editor = readFileSync(FRONT + 'src/components/manager/ProductOptionEditor.js', 'utf8');

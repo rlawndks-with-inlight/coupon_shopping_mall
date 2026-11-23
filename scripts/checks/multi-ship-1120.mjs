@@ -127,7 +127,7 @@ t('⑦ 보내는 방식 기본은 같은 상품 보내기, 요약 금액·개수
   && /const 곱 = 여러곳 && 보내는방식 === 'same' \? Math\.max\(1, 곳들\.length\) : 1;/.test(주문서));
 t('⑦ 결제에 배송지마다 보낼 줄을 넘긴다', /곳들\.map\(\(곳\) => \(\{ \.\.\.곳, 줄: 곳의줄\(곳, products, 보내는방식\) \}\)\)/.test(주문서) && /Array\.isArray\(곳\?\.줄\) \? 곳\.줄\.map/.test(util));
 t('⑦ 회원은 주소록에서 고른다, 다 쓴 배송지는 접는다, 배송비 규칙을 몰 금액으로 적는다', /addressList=\{addressList\}/.test(주문서) && /set주소록대상\(k\)/.test(편집)
-  && /if \(접힘\.has\(곳\.키\) && 곳완성\(곳, isValidPhone\)\)/.test(편집) && /배송비는 배송지마다 \{\{fee\}\}이고, 한 곳에 \{\{min\}\} 이상 보내면 그 곳은 무료입니다\./.test(편집));
+  && /if \(곳\.접음 && 곳완성\(곳, isValidPhone\)\)/.test(편집) && /배송비는 배송지마다 \{\{fee\}\}이고, 한 곳에 \{\{min\}\} 이상 보내면 그 곳은 무료입니다\./.test(편집));
 t('⑦ 결제 후: 완료 화면에 「배송지 N곳」, 비회원 조회는 목록부터, 주문 상태에 받는 분', /sessionStorage\.setItem\('multiShipOrder'/.test(util)
   && /배송지 \{\{n\}\}곳으로 나눠 주문되었습니다/.test(앞('src/views/shop/order/PayResultView.js'))
   && /\(여러곳주문 \? null : 방금주문\)/.test(앞('src/pages/shop/auth/order-check.js')) && /row\?\.pay_group \? ` · \$\{translate\('여러 곳 배송'\)\}/.test(앞('src/utils/function.js')));
@@ -137,13 +137,22 @@ t('⑧ 결제실패/미완료는 묶음을 첫 주문 한 줄로 접고 「몇 �
   && /pay_group IS NULL OR \$\{t\}\.ord_num = \$\{t\}\.pay_group/.test(pg) && /배송지 \{row\.group_count\}곳 · 합계/.test(앞('src/components/manager/OrderColumns.js')));
 
 // 11/23 포스몰 — 배송지 2 에서 주소를 고르자마자 상세주소·요청사항을 쓰기 전에 접혔다. 접힘은 손님이 누를 때만
+// 같은 날 점검: 켤 때 옮겨 온 1번도 상세주소 없이 접혀 있었다 → 처음엔 아무것도 접지 않고, 접음은 배송지 안에 둬 되살릴 때도 그대로
 {
-  const 접힘부분 = 편집.slice(편집.indexOf('const [접힘, set접힘]'), 편집.indexOf('const 고치기 ='));
-  t('⑬ 접힘은 처음 열 때 이미 다 쓴 배송지만, 그 뒤엔 단추로만', /useState\(\(\) => new Set\(곳들\.filter\(\(곳\) => 곳완성\(곳, isValidPhone\)\)/.test(접힘부분));
-  t('⑬ 「입력 완료」가 그 배송지를 접는다', /onClick=\{\(\) => 접기\(\[곳\.키\]\)\}>\{translate\('입력 완료'\)\}/.test(편집));
-  t('⑬ 「수정」이 그 배송지를 편다', /onClick=\{\(\) => 펴기\(곳\.키\)\}>\{translate\('수정'\)\}/.test(편집));
-  t('⑬ 고치기(칸 입력)는 접힘을 건드리지 않는다', !/접기|set접힘/.test(편집.slice(편집.indexOf('const 고치기 ='), 편집.indexOf('const 수량바꾸기'))));
-  t('⑬ 옛 「펼친」 상태가 남지 않았다', !/set펼친|\[펼친,/.test(편집));
+  t('⑬ 접힘은 배송지 안의 접음(손님이 누른 것)으로만 정한다', /if \(곳\.접음 && 곳완성\(곳, isValidPhone\)\) \{/.test(편집));
+  t('⑬ 처음 켤 때·빈 배송지는 접음이 없다', !/접음/.test(편집.slice(편집.indexOf('const 빈곳 ='), 편집.indexOf('// 배송지 한 곳의 주문 줄'))));
+  t('⑬ 「입력 완료」가 그 배송지를 접는다', /const 접기 = \(k\) => 고치기\(k, \{ 접음: true \}\);/.test(편집) && /onClick=\{\(\) => 접기\(k\)\}>\{translate\('입력 완료'\)\}/.test(편집));
+  t('⑬ 「수정」이 그 배송지를 편다', /const 펴기 = \(k\) => 고치기\(k, \{ 접음: false \}\);/.test(편집) && /onClick=\{\(\) => 펴기\(k\)\}>\{translate\('수정'\)\}/.test(편집));
+  t('⑬ 「배송지 추가」는 다 쓴 곳만 접고 새 곳을 한 번에 더한다', /set곳들\(\[\.\.\.곳들\.map\(\(곳\) => \(곳완성\(곳, isValidPhone\) \? \{ \.\.\.곳, 접음: true \} : 곳\)\), 빈곳\(\)\]\);/.test(편집));
+  t('⑬ 옛 「펼친」·「접힘」 상태가 남지 않았다', !/set펼친|\[펼친,|set접힘|접힘\.has/.test(편집));
+  t('⑬ 결제 때 서버로 보내는 배송지에 접음은 없다(필요한 칸만 골라 보낸다)', /destinations\.push\(\{\s*\n\s*receiver: 곳\.receiver, addr_phone: 곳\.addr_phone, zonecode: 곳\.zonecode, addr: 곳\.addr,/.test(util));
+  // 우편번호 검색이 끝나면: 앞 주소의 상세주소를 비우고 상세주소 칸으로 커서(한 곳·여러 곳·주소록 창)
+  const 우편 = 주문서.slice(주문서.indexOf('const onCompletePost'), 주문서.indexOf('setPostOpen(false);\n  };'));
+  t('⑬ 주소를 고르면 상세주소를 비운다(여러 곳·한 곳)', /addr: 주소, detail_addr: '' \} : 곳/.test(우편) && /setPayData\(\{ \.\.\.payData, zonecode: data\?\.zonecode, addr: 주소, detail_addr: '' \}\);/.test(우편));
+  t('⑬ 주소를 고르면 상세주소 칸으로 커서', /상세주소로\(`multi-detail-addr-\$\{k\}`\);/.test(우편) && /상세주소로\('order-detail-addr'\);/.test(우편)
+    && /id=\{`multi-detail-addr-\$\{k\}`\}/.test(편집) && /id="order-detail-addr"/.test(주문서) && /<Dialog open=\{postOpen\}[^\n]*disableRestoreFocus/.test(주문서));
+  const 주소록창 = 앞('src/components/dialog/DialogAddAddress.js');
+  t('⑬ 주소록 창도 주소를 고르면 상세주소 칸에 커서', /set상세먼저\(true\);/.test(주소록창) && /autoFocus=\{!상세먼저\}/.test(주소록창) && /autoFocus=\{상세먼저\}/.test(주소록창));
 }
 
 // 11/20 저녁 — 이름은 「여러 곳으로 배송」(11/21 선물 등 뺌), 작은 체크칸 대신 꽉 찬 두 단추, 1개만 담으면 나눠 보내기 막기

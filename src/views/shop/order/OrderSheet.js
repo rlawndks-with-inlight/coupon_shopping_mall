@@ -507,14 +507,24 @@ export default function OrderSheet({ router }) {
     setUpdatedAddressOpen(true);
   };
   // 우편번호 검색 완료 → 주소/우편번호 반영(직접 입력 모드)
+  //   상세주소는 비운다 — 앞 주소의 동·호수가 새 주소에 붙어 잘못 배송될 수 있다(주소록 창 DialogAddAddress 와 같은 규칙).
+  //   그리고 상세주소 칸으로 커서를 옮긴다 — 주소만 고르고 상세주소를 빠뜨리기 쉽다(11/23 포스몰 지적 뒤 점검).
+  //   창이 닫히며 포커스를 「우편번호 검색」 단추로 되돌리지 않게 창에 disableRestoreFocus 를 둔다.
+  const 상세주소로 = (id) => setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) { el.focus(); el.scrollIntoView?.({ block: 'center' }); }
+  }, 150);
   const onCompletePost = (data) => {
     const 주소 = data?.roadAddress || data?.address || '';
     if (우편대상 !== null) {
       // 여러 곳으로 배송의 배송지 하나
-      set곳들((prev) => prev.map((곳, i) => (i === 우편대상 ? { ...곳, zonecode: data?.zonecode, addr: 주소 } : 곳)));
+      const k = 우편대상;
+      set곳들((prev) => prev.map((곳, i) => (i === k ? { ...곳, zonecode: data?.zonecode, addr: 주소, detail_addr: '' } : 곳)));
       set우편대상(null);
+      상세주소로(`multi-detail-addr-${k}`);
     } else {
-      setPayData({ ...payData, zonecode: data?.zonecode, addr: 주소 });
+      setPayData({ ...payData, zonecode: data?.zonecode, addr: 주소, detail_addr: '' });
+      상세주소로('order-detail-addr');
     }
     setPostOpen(false);
   };
@@ -1123,7 +1133,7 @@ export default function OrderSheet({ router }) {
       <DialogAddAddress addAddressOpen={addAddressOpen} setAddAddressOpen={setAddAddressOpen} onAddAddress={onAddAddress} />
       <DialogAddAddress addAddressOpen={updateAddressOpen} setAddAddressOpen={setUpdatedAddressOpen}
         onAddAddress={onAddAddress} type={'update'} id={addressID} onDeleteAddress={onDeleteAddress} />
-      <Dialog open={postOpen} onClose={() => { setPostOpen(false); set우편대상(null); }}
+      <Dialog open={postOpen} onClose={() => { setPostOpen(false); set우편대상(null); }} disableRestoreFocus
         fullScreen={typeof window !== 'undefined' && window.innerWidth < 700}
         PaperProps={{ style: { width: typeof window !== 'undefined' && window.innerWidth >= 700 ? '600px' : '100%', maxWidth: '100%' } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, borderBottom: '1px solid #eee' }}>
@@ -1426,7 +1436,7 @@ export default function OrderSheet({ router }) {
                           </Stack>
                         </>
                       )}
-                      <TextField fullWidth size="small" label={translate('상세주소')} value={payData.detail_addr || ''}
+                      <TextField fullWidth size="small" id="order-detail-addr" label={translate('상세주소')} value={payData.detail_addr || ''}
                         onChange={(e) => setPayData({ ...payData, detail_addr: e.target.value })} />
                       {/* 배송 요청사항 — 받을 자리가 아예 없어서 고객이 전화로 말하거나 포기했다.
                           주소록이 아니라 '이 주문' 에 남긴다(주소록 행은 나중에 고쳐지거나 지워진다). */}

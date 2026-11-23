@@ -64,6 +64,10 @@ const DialogAddAddress = (props) => {
 
   const [addAddressObj, setAddAddressObj] = useState({ ...EMPTY_FORM })
   const [saving, setSaving] = useState(false);
+  // 우편번호 검색으로 주소를 막 골랐으면 상세주소 칸에 커서를 둔다(받는 사람 칸이 아니라) — 주문서와 같은 흐름(2026-11-23)
+  const [상세먼저, set상세먼저] = useState(false);
+  // 창을 새로 열 때마다 처음(받는 사람 칸)부터 — 저장으로 닫히는 길도 있어 여는 쪽에서 되돌린다
+  useEffect(() => { if (addAddressOpen) set상세먼저(false); }, [addAddressOpen]);
 
   const emptyObj = { ...EMPTY_FORM };
   const setField = (key, value) => setAddAddressObj((prev) => ({ ...prev, [key]: value }));
@@ -112,9 +116,11 @@ const DialogAddAddress = (props) => {
       detail_addr: '',
       is_open_daum_post: false,
     })
+    set상세먼저(true);
   }
 
   const closeAndReset = () => {
+    set상세먼저(false);
     setAddAddressObj({ ...EMPTY_FORM });
     setAddrMode('KR'); // 방식도 함께 초기화(안 하면 다음에 열 때 해외 화면이 남는다)
     setAddAddressOpen(false);
@@ -149,7 +155,7 @@ const DialogAddAddress = (props) => {
                 {isUpdate ? translate('수정하실 내용을 입력 후 저장을 눌러주세요.') : translate('새 배송지를 입력 후 저장을 눌러주세요.')}
               </DialogContentText>
               <TextField
-                autoFocus
+                autoFocus={!상세먼저}
                 fullWidth
                 value={addAddressObj.receiver}
                 margin="dense"
@@ -220,6 +226,7 @@ const DialogAddAddress = (props) => {
                   />
                   <TextField
                     fullWidth
+                    autoFocus={상세먼저}
                     value={addAddressObj.detail_addr}
                     margin="dense"
                     label={translate('상세주소')}

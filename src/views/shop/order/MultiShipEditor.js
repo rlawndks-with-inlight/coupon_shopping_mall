@@ -20,6 +20,8 @@ import { formatLang } from 'src/utils/format';
 // 다 쓴 배송지는 한 줄로 접는다 — 10곳이어도 화면이 길어지지 않게. 회원은 주소록에서 고른다.
 // 접는 것은 손님이 「입력 완료」나 「배송지 추가」를 눌렀을 때뿐이다(11/23 포스몰 지적). 필수칸이 차는 순간 접었더니
 // 배송지 2 에서 주소를 고르자마자 상세주소·배송 요청사항을 쓰기도 전에 접혀 버렸다.
+// 켤 때 한 곳 배송 칸에서 옮겨 온 1번도 접지 않는다 — 상세주소 없이 접혀 「다 쓴 것」처럼 보였다.
+// 접었는지는 배송지 안(접음)에 둔다 — 새로고침·결제 실패 뒤 되살릴 때(orderDraft) 손님이 접은 그대로 돌아온다.
 
 export const 최대곳 = 10;
 const 빈곳 = () => ({ 키: Math.random().toString(36).slice(2), receiver: '', addr_phone: '', zonecode: '', addr: '', detail_addr: '', delivery_memo: '', 수량: {} });
@@ -44,7 +46,7 @@ export const 곳별금액 = (곳들, products, 방식 = 'split') => (곳들 ?? [
 export const 남은수량 = (곳들, products) => (products ?? []).map((p, i) =>
   (Number(p?.order_count) || 0) - (곳들 ?? []).reduce((s, 곳) => s + (Number(곳?.수량?.[i]) || 0), 0));
 
-// 배송지 칸을 다 썼나(받는 분·연락처·주소) — 「입력 완료」 단추를 보일지. 접는 것은 손님이 정한다(접힘)
+// 배송지 칸을 다 썼나(받는 분·연락처·주소) — 「입력 완료」 단추를 보일지. 접는 것은 손님이 정한다(곳.접음)
 export const 곳완성 = (곳, isValidPhone) => !!String(곳?.receiver ?? '').trim() && isValidPhone(곳?.addr_phone)
   && !!String(곳?.addr ?? '').trim() && !!String(곳?.zonecode ?? '').trim();
 
@@ -95,13 +97,11 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
   const 원 = (v) => commarNumberWithUnit(v, currentLang?.value);
   const 금액 = 곳별금액(곳들, products, 방식);
   const 남음 = 남은수량(곳들, products);
-  // 접어 둔 배송지(키). 처음 열 때 이미 다 쓴 배송지(주문자 배송지로 채운 1번·되살린 배송지)만 접어 둔다.
-  // 그 뒤로는 「입력 완료」·「배송지 추가」를 눌러야 접힌다 — 칸이 다 찼다고 저절로 접지 않는다.
-  const [접힘, set접힘] = useState(() => new Set(곳들.filter((곳) => 곳완성(곳, isValidPhone)).map((곳) => 곳.키)));
-  const 접기 = (키들) => set접힘((s) => new Set([...s, ...키들]));
-  const 펴기 = (키) => set접힘((s) => new Set([...s].filter((x) => x !== 키)));
   const [주소록대상, set주소록대상] = useState(null);
   const 고치기 = (k, 바꿀) => set곳들(곳들.map((곳, i) => (i === k ? { ...곳, ...바꿀 } : 곳)));
+  // 접기·펴기는 손님이 누를 때만(「입력 완료」·「수정」·「배송지 추가」). 칸이 다 찼다고 저절로 접지 않는다.
+  const 접기 = (k) => 고치기(k, { 접음: true });
+  const 펴기 = (k) => 고치기(k, { 접음: false });
   const 수량바꾸기 = (k, i, v) => {
     const 지금 = Number(곳들[k]?.수량?.[i]) || 0;
     const 최대 = 지금 + Math.max(0, 남음[i]);
@@ -185,7 +185,7 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
           + (Number(금액[k].island?.fee) > 0 ? ` + ${translate(금액[k].island.region === 'jeju' ? '제주 추가배송비' : '도서산간 추가배송비')} ${원(금액[k].island.fee)}` : '');
         const 막힘 = 금액[k].island?.blocked;
         // 손님이 접은 배송지는 한 줄로 보인다(그사이 칸이 비면 다시 편다)
-        if (접힘.has(곳.키) && 곳완성(곳, isValidPhone)) {
+        if (곳.접음 && 곳완성(곳, isValidPhone)) {
           return (
             <Paper key={곳.키} variant="outlined" sx={{ p: 1.5, ...(막힘 || (방식 === 'split' && !개수) ? { borderColor: 'error.main' } : {}) }}>
               <Stack direction="row" alignItems="center" spacing={1}>
@@ -197,7 +197,7 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
                       : `${translate('상품 {{n}}개', { n: 개수 })} · ${배송비말} · ${translate('결제금액')} ${원(금액[k].amount)}`}
                   </Typography>
                 </Box>
-                <Button size="small" onClick={() => 펴기(곳.키)}>{translate('수정')}</Button>
+                <Button size="small" onClick={() => 펴기(k)}>{translate('수정')}</Button>
                 {곳들.length > 2 && (
                   <IconButton size="small" aria-label={translate('이 배송지 삭제')} onClick={() => set곳들(곳들.filter((_, i) => i !== k))}>
                     <Iconify icon="eva:trash-2-outline" />
@@ -235,7 +235,8 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
                 <Button variant="outlined" sx={{ height: 40 }} onClick={() => on우편번호(k)}>{translate('우편번호 검색')}</Button>
               </Stack>
               <TextField fullWidth size="small" label={translate('주소')} value={곳.addr} InputProps={{ readOnly: true }} placeholder={translate('우편번호 검색으로 입력')} />
-              <TextField fullWidth size="small" label={translate('상세주소')} value={곳.detail_addr}
+              {/* id — 우편번호 검색이 끝나면 주문서가 이 칸으로 커서를 옮긴다(OrderSheet onCompletePost) */}
+              <TextField fullWidth size="small" id={`multi-detail-addr-${k}`} label={translate('상세주소')} value={곳.detail_addr}
                 onChange={(e) => 고치기(k, { detail_addr: e.target.value })} />
               <TextField fullWidth size="small" label={translate('배송 요청사항 (선택)')} value={곳.delivery_memo} inputProps={{ maxLength: 200 }}
                 onChange={(e) => 고치기(k, { delivery_memo: e.target.value })} />
@@ -270,7 +271,7 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
                 </Typography>
               )}
               {곳완성(곳, isValidPhone) && (
-                <Button size="small" variant="outlined" sx={{ alignSelf: 'flex-end' }} onClick={() => 접기([곳.키])}>{translate('입력 완료')}</Button>
+                <Button size="small" variant="outlined" sx={{ alignSelf: 'flex-end' }} onClick={() => 접기(k)}>{translate('입력 완료')}</Button>
               )}
             </Stack>
           </Paper>
@@ -279,9 +280,8 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
       {곳들.length < 최대곳 && (
         <Button variant="soft" startIcon={<Iconify icon="eva:plus-fill" />} sx={{ alignSelf: 'flex-start' }}
           onClick={() => {
-            // 새 배송지로 넘어가면 다 쓴 배송지는 접는다(덜 쓴 곳은 펼친 채로 둔다)
-            접기(곳들.filter((곳) => 곳완성(곳, isValidPhone)).map((곳) => 곳.키));
-            set곳들([...곳들, { ...빈곳() }]);
+            // 새 배송지로 넘어가면 다 쓴 배송지는 접는다(덜 쓴 곳은 펼친 채로 둔다) — 한 번에 바꾼다(두 번 부르면 앞의 것이 덮인다)
+            set곳들([...곳들.map((곳) => (곳완성(곳, isValidPhone) ? { ...곳, 접음: true } : 곳)), 빈곳()]);
           }}>
           {translate('배송지 추가 ({{n}}/{{max}})', { n: 곳들.length, max: 최대곳 })}
         </Button>

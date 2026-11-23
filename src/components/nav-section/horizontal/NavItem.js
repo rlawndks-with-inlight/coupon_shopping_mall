@@ -16,6 +16,7 @@ import { StyledItem, StyledIcon } from './styles';
 const NavItem = forwardRef(({ item, depth, open, active, isExternalLink, ...other }, ref) => {
 
   const { title, path, icon, info, children, disabled, caption, roles } = item;
+  const 표시 = info || (!!children && !open ? item.infoClosed : null); // 접힌 상위 메뉴에만(vertical/NavItem.js 참고)
 
   const subItem = depth !== 1;
 
@@ -32,9 +33,9 @@ const NavItem = forwardRef(({ item, depth, open, active, isExternalLink, ...othe
         }}
       />
 
-      {info && (
+      {표시 && (
         <Box component="span" sx={{ ml: 1, lineHeight: 0 }}>
-          {info}
+          {표시}
         </Box>
       )}
 

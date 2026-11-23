@@ -4,6 +4,7 @@ import axios from "./axios";
 import { serialize } from 'object-to-formdata';
 import { getLocalStorage } from "./local-storage";
 import { when } from "jquery";
+import { 주문건수바뀜 } from "./order-menu-counts";
 
 // 마지막 API 실패 사유 기록.
 //
@@ -53,6 +54,7 @@ export const post = async (url, obj) => {
         };
         const { data: response } = await axios.post(url, formData, config);
         if (response?.result > 0) {
+            주문건수바뀜(url); // 관리자 메뉴 「결제완료」「취소요청」 숫자(order-menu-counts.js)
             return response?.data;
         } else {
             setLastApiError(response?.message);
@@ -70,6 +72,7 @@ export const deleteItem = async (url, obj) => {
     try {
         const { data: response } = await axios.delete(url, obj);
         if (response?.result > 0) {
+            주문건수바뀜(url);
             return response?.data;
         } else {
             toast.error(serverMessage(response?.message));
@@ -95,6 +98,7 @@ export const put = async (url, obj) => {
         };
         const { data: response } = await axios.put(url, formData, config);
         if (response?.result > 0) {
+            주문건수바뀜(url);
             return response?.data;
         } else {
             toast.error(serverMessage(response?.message));

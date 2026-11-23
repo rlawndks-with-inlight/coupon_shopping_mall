@@ -23,6 +23,9 @@ NavItem.propTypes = {
 export default function NavItem({ item, depth, open, active, isExternalLink, ...other }) {
 
   const { title, path, icon, info, children, disabled, caption, roles } = item;
+  // infoClosed: 하위 메뉴가 있는 칸이 접혀 있을 때만 보이는 표시(관리자 메뉴 주문 건수, 2026-11-23).
+  //   펼치면 하위 칸(결제완료·취소요청)이 제 숫자를 보이므로 위아래에 같은 숫자가 겹치지 않게 한다.
+  const 표시 = info || (!!children && !open ? item.infoClosed : null);
 
   const subItem = depth !== 1;
 
@@ -56,9 +59,9 @@ export default function NavItem({ item, depth, open, active, isExternalLink, ...
         }}
       />
 
-      {info && (
-        <Box component="span" sx={{ lineHeight: 0 }}>
-          {info}
+      {표시 && (
+        <Box component="span" sx={{ lineHeight: 0, ml: 1, flexShrink: 0 }}>
+          {표시}
         </Box>
       )}
 

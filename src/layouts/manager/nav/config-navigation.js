@@ -12,6 +12,8 @@ import { isShopgoBrand, isShopgoMerchant, SHOPGO_MASTER_ID } from 'src/utils/is-
 import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
 import { 본사화면 } from 'src/utils/manager-visibility';
 import { 입금대기수단있음 } from 'src/utils/order-menu';
+import { useOrderMenuCounts } from 'src/utils/order-menu-counts';
+import { 메뉴건수 } from './MenuCount';
 
 // ----------------------------------------------------------------------
 
@@ -54,6 +56,10 @@ export const navConfig = () => {
   const [propertyGroupList, setPropertyGroupList] = useState([]);
 
   const [isSettingComplete, setIsSettingComplete] = useState(false);
+  // 「결제완료」「취소요청」 옆 건수(해담수산 요청 2026-11-23) — 관리자(등급 10 이상)만, 주문 메뉴가 없는 본사 화면은 빼고 묻는다
+  const 주문건수 = useOrderMenuCounts(Number(user?.level) >= 10 && Number(themeDnsData?.id) > 0 && Number(themeDnsData?.id) !== SHOPGO_MASTER_ID);
+  const 결제완료수 = 주문건수?.paid ?? 0;
+  const 취소요청수 = 주문건수?.cancel_request ?? 0;
   //dns_data와 user를 통해 계산하기
 
   useEffect(() => {
@@ -268,9 +274,12 @@ export const navConfig = () => {
           title: '주문관리',
           path: PATH_MANAGER.orders.trx + '/all',//PATH_MANAGER.orders.root,
           icon: ICONS.ecommerce,
+          // 접혀 있을 때만 보이는 숫자(infoClosed) — 펼치면 아래 「결제완료」「취소요청」 칸이 제 숫자를 보인다
+          infoClosed: 메뉴건수(결제완료수 + 취소요청수, `처리할 주문 ${결제완료수 + 취소요청수}건 (결제완료 ${결제완료수} · 취소요청 ${취소요청수})`),
           children: [
             {
               title: '주문관리', path: PATH_MANAGER.orders.trx + '/all',
+              infoClosed: 메뉴건수(결제완료수, `결제완료 ${결제완료수}건`),
               children: [
                 // 샵고 가맹점의 전체는 결제가 된 주문과 취소된 주문만 보여 준다(포스페이 요청 2026-11-04 ④⑤). 실패 건은 아래 메뉴로.
                 { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
@@ -283,7 +292,7 @@ export const navConfig = () => {
                     ...(입금대기수단있음(themeDnsData) ? [{ title: '결제대기(입금확인)', path: PATH_MANAGER.orders.trx + '/0' }] : []),
                   ]
                   : [{ title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' }]),
-                { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5' },
+                { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5', info: 메뉴건수(결제완료수, `결제완료 ${결제완료수}건`) },
                 ...(themeDnsData?.id != 5 ?
                   [
                     // shopgo 하위 가맹점은 창고 입고 단계를 쓰지 않아 '입고완료' 메뉴를 숨긴다.
@@ -298,8 +307,9 @@ export const navConfig = () => {
             },
             {
               title: '주문취소관리', path: PATH_MANAGER.orders.trxCancel + '/1',
+              infoClosed: 메뉴건수(취소요청수, `취소요청 ${취소요청수}건`),
               children: [
-                { title: '취소요청', path: PATH_MANAGER.orders.trxCancel + '/1' },
+                { title: '취소요청', path: PATH_MANAGER.orders.trxCancel + '/1', info: 메뉴건수(취소요청수, `취소요청 ${취소요청수}건`) },
                 { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/2' },
               ],
             },

@@ -131,6 +131,11 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
           flexWrap: 'wrap',
           '& .MuiToggleButtonGroup-grouped': { border: '1px solid', borderColor: (t) => `${t.palette.divider} !important`, px: 1.5 },
           '& .MuiToggleButtonGroup-grouped:not(:first-of-type)': { ml: 1, borderLeft: '1px solid' },
+          // 고르지 않은 단추도 진한 글자로 — 옅은 회색이라 막힌 단추와 똑같이 꺼져 보였다(11/23 포스몰).
+          //   고른 단추는 진한 테두리, 막힌 단추는 점선 테두리로 셋을 가른다.
+          '& .MuiToggleButtonGroup-grouped:not(.Mui-selected):not(.Mui-disabled)': { color: 'text.primary' },
+          '& .MuiToggleButtonGroup-grouped.Mui-selected': { borderColor: (t) => `${t.palette.text.primary} !important` },
+          '& .MuiToggleButtonGroup-grouped.Mui-disabled': { borderStyle: 'dashed' },
         }}
         onChange={(e, v) => {
           if (!v || v === 방식) return;
@@ -144,9 +149,11 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
         <ToggleButton value="split" disabled={!나눔가능}>{translate('주문 상품 나눠보내기')}</ToggleButton>
         <ToggleButton value="same">{translate('주문 상품 묶어보내기')}</ToggleButton>
       </ToggleButtonGroup>
+      {/* 1개만 담고 배송지를 2곳으로 하면 오른쪽 요약이 「상품금액 · 2개」(묶어보내기는 배송지 수만큼 곱한다)라
+          2개 이상인데 왜 막혔는지 알 수 없었다(11/23 포스몰) — 담은 수량 기준이라는 것과 푸는 방법을 적는다. */}
       {!나눔가능 && (
         <Typography variant="caption" sx={{ color: 'text.secondary', mt: -1.25, wordBreak: 'keep-all' }}>
-          {translate('주문 상품 나눠보내기')}: {translate('2개 이상 담았을 때 쓸 수 있습니다.')}
+          {translate('주문 상품 나눠보내기')}: {translate('담은 수량이 1개라 나눠 보낼 수 없습니다. 위 상품 목록에서 수량을 2개 이상으로 늘리면 쓸 수 있습니다.')}
         </Typography>
       )}
       <Box>

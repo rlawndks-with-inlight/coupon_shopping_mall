@@ -1148,7 +1148,7 @@ const en = {
   "여러 곳으로 배송": "Ship to multiple addresses",
   "한 곳으로 배송": "Ship to one address",
   "받는 분이 여럿이면 한 번 결제로 최대 {{n}}곳까지 보낼 수 있습니다.": "Sending to several people? Ship to up to {{n}} addresses with one payment.",
-  "2개 이상 담았을 때 쓸 수 있습니다.": "Available when you have 2 or more items.",
+  "담은 수량이 1개라 나눠 보낼 수 없습니다. 위 상품 목록에서 수량을 2개 이상으로 늘리면 쓸 수 있습니다.": "You have only 1 item, so it can't be split. Increase the quantity to 2 or more in the item list above to use this.",
   "남은 결제금액": "Remaining amount",
   "환불": "Refund",
   "일부 취소": "Partially cancelled",

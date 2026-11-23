@@ -1143,7 +1143,7 @@ const es = {
   "여러 곳으로 배송": "Enviar a varias direcciones",
   "한 곳으로 배송": "Enviar a una dirección",
   "받는 분이 여럿이면 한 번 결제로 최대 {{n}}곳까지 보낼 수 있습니다.": "¿Varios destinatarios? Envíe hasta a {{n}} direcciones con un solo pago.",
-  "2개 이상 담았을 때 쓸 수 있습니다.": "Disponible con 2 o más productos.",
+  "담은 수량이 1개라 나눠 보낼 수 없습니다. 위 상품 목록에서 수량을 2개 이상으로 늘리면 쓸 수 있습니다.": "Solo hay 1 unidad, así que no se puede dividir. Aumenta la cantidad a 2 o más en la lista de productos de arriba para usar esta opción.",
   "남은 결제금액": "Importe restante",
   "환불": "Reembolso",
   "일부 취소": "Cancelado parcialmente",

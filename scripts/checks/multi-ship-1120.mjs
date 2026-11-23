@@ -155,6 +155,14 @@ t('⑧ 결제실패/미완료는 묶음을 첫 주문 한 줄로 접고 「몇 �
   t('⑬ 주소록 창도 주소를 고르면 상세주소 칸에 커서', /set상세먼저\(true\);/.test(주소록창) && /autoFocus=\{!상세먼저\}/.test(주소록창) && /autoFocus=\{상세먼저\}/.test(주소록창));
 }
 
+// 11/23 포스몰 — 1개만 담고 배송지 2곳이면 요약이 「2개」라 나눠보내기가 왜 막혔는지 몰랐다 · 고르지 않은 단추가 막힌 단추처럼 보였다
+{
+  t('⑭ 막혔을 때 담은 수량 기준과 푸는 방법을 적는다(옛 문구 없음)', /담은 수량이 1개라 나눠 보낼 수 없습니다\. 위 상품 목록에서 수량을 2개 이상으로 늘리면 쓸 수 있습니다\./.test(편집) && !/2개 이상 담았을 때 쓸 수 있습니다/.test(편집));
+  t('⑭ 새 문구가 5개 언어 사전에 있고 옛 문구는 없다', ['ko', 'en', 'ja', 'cn', 'es'].map((l) => 앞(`src/locales/langs/${l}.js`)).every((d) => d.includes('"담은 수량이 1개라 나눠 보낼 수 없습니다. 위 상품 목록에서 수량을 2개 이상으로 늘리면 쓸 수 있습니다.":') && !d.includes('"2개 이상 담았을 때 쓸 수 있습니다.":')));
+  t('⑭ 고르지 않은 단추는 진한 글자, 고른 단추는 진한 테두리, 막힌 단추는 점선', /'& \.MuiToggleButtonGroup-grouped:not\(\.Mui-selected\):not\(\.Mui-disabled\)': \{ color: 'text\.primary' \}/.test(편집)
+    && /'& \.MuiToggleButtonGroup-grouped\.Mui-selected': \{ borderColor:/.test(편집) && /'& \.MuiToggleButtonGroup-grouped\.Mui-disabled': \{ borderStyle: 'dashed' \}/.test(편집));
+}
+
 // 11/20 저녁 — 이름은 「여러 곳으로 배송」(11/21 선물 등 뺌), 작은 체크칸 대신 꽉 찬 두 단추, 1개만 담으면 나눠 보내기 막기
 const 고르기 = 주문서.slice(주문서.indexOf('{(여러곳가능 || 여러곳) && ('), 주문서.indexOf('{여러곳 ? ('));
 t('⑨ 한 곳/여러 곳은 꽉 찬 두 단추(작은 체크칸 아님)', /<ToggleButtonGroup exclusive fullWidth/.test(고르기) && !/Checkbox/.test(고르기)
@@ -174,7 +182,7 @@ t('⑨ 옛 이름 「여러 곳으로 보내기」가 남지 않는다', ![주�
   const 가이드 = 앞('src/components/manager/guideContent.js');
   t('⑪ 단추 이름은 주문 상품 나눠보내기 · 주문 상품 묶어보내기',
     /<ToggleButton value="split" disabled=\{!나눔가능\}>\{translate\('주문 상품 나눠보내기'\)\}/.test(편집) && /<ToggleButton value="same">\{translate\('주문 상품 묶어보내기'\)\}/.test(편집)
-    && /translate\('주문 상품 나눠보내기'\)\}: \{translate\('2개 이상 담았을 때 쓸 수 있습니다\.'\)/.test(편집));
+    && /translate\('주문 상품 나눠보내기'\)\}: \{translate\('담은 수량이 1개라 나눠 보낼 수 없습니다\. 위 상품 목록에서 수량을 2개 이상으로 늘리면 쓸 수 있습니다\.'\)/.test(편집));
   t('⑪ 「선물 등」·선물 상자 아이콘·옛 단추 이름이 화면·사전·가이드에 남지 않는다',
     ![주석뺌(주문서), 주석뺌(편집), 가이드, ...사전들].some((x) => /선물 등|담은 수량 나눠 보내기|모두 같은 상품 보내기/.test(x)) && !/eva:gift/.test(주석뺌(주문서)));
   t('⑪ 새 이름 3개가 5개 언어 사전에 모두 있다',

@@ -50,40 +50,88 @@ export const 남은수량 = (곳들, products) => (products ?? []).map((p, i) =>
 export const 곳완성 = (곳, isValidPhone) => !!String(곳?.receiver ?? '').trim() && isValidPhone(곳?.addr_phone)
   && !!String(곳?.addr ?? '').trim() && !!String(곳?.zonecode ?? '').trim();
 
-// 결제 전 검사. 문제가 있으면 손님에게 보일 문장(번역 키, 값)을, 없으면 null.
+// 결제 전 검사. 문제가 있으면 [손님에게 보일 문장(번역 키), 값, 자리]를, 없으면 null.
+//   자리 — 주문서가 그곳으로 화면을 옮기고 펼친다(11/23: 결제수단을 누르면 맨 아래에 토스트만 떠서
+//   위쪽 어느 배송지가 문제인지 찾아 올라가야 했다). { 남음: true } | { 곳: k, 칸: 'receiver'|'addr_phone'|'addr'|'items' }
 export const 여러곳검사 = (곳들, products, isValidPhone, 방식 = 'split') => {
-  if (!Array.isArray(곳들) || 곳들.length < 2) return ['배송지를 2곳 이상 입력해 주세요.'];
-  if (곳들.length > 최대곳) return ['배송지는 최대 {{n}}곳까지 입력할 수 있습니다.', { n: 최대곳 }];
+  if (!Array.isArray(곳들) || 곳들.length < 2) return ['배송지를 2곳 이상 입력해 주세요.', undefined, null];
+  if (곳들.length > 최대곳) return ['배송지는 최대 {{n}}곳까지 입력할 수 있습니다.', { n: 최대곳 }, null];
   if (방식 !== 'same') {
     const 남음 = 남은수량(곳들, products);
     const i = 남음.findIndex((n) => n !== 0);
     if (i >= 0) return [남음[i] > 0 ? '「{{name}}」 {{n}}개를 아직 배송지에 나누지 않았습니다.' : '「{{name}}」을(를) 주문 수량보다 많이 나눴습니다.',
-      { name: products[i]?.product_name ?? '', n: Math.abs(남음[i]) }];
+      { name: products[i]?.product_name ?? '', n: Math.abs(남음[i]) }, { 남음: true }];
   }
   for (let k = 0; k < 곳들.length; k++) {
     const 곳 = 곳들[k];
-    if (!String(곳.receiver ?? '').trim()) return ['{{n}}번째 배송지의 받는 분을 입력해 주세요.', { n: k + 1 }];
-    if (!isValidPhone(곳.addr_phone)) return ['{{n}}번째 배송지의 연락처를 정확히 입력해 주세요.', { n: k + 1 }];
-    if (!String(곳.addr ?? '').trim() || !String(곳.zonecode ?? '').trim()) return ['{{n}}번째 배송지의 주소를 입력해 주세요.', { n: k + 1 }];
+    if (!String(곳.receiver ?? '').trim()) return ['{{n}}번째 배송지의 받는 분을 입력해 주세요.', { n: k + 1 }, { 곳: k, 칸: 'receiver' }];
+    if (!isValidPhone(곳.addr_phone)) return ['{{n}}번째 배송지의 연락처를 정확히 입력해 주세요.', { n: k + 1 }, { 곳: k, 칸: 'addr_phone' }];
+    if (!String(곳.addr ?? '').trim() || !String(곳.zonecode ?? '').trim()) return ['{{n}}번째 배송지의 주소를 입력해 주세요.', { n: k + 1 }, { 곳: k, 칸: 'addr' }];
     const 줄 = 곳의줄(곳, products, 방식);
-    if (!줄.length) return ['{{n}}번째 배송지에 보낼 상품을 담아 주세요.', { n: k + 1 }];
+    if (!줄.length) return ['{{n}}번째 배송지에 보낼 상품을 담아 주세요.', { n: k + 1 }, { 곳: k, 칸: 'items' }];
     // 추가상품은 본상품 없이 못 산다 — 배송지마다 같은 규칙(서버도 배송지마다 본다)
     if (줄.some((p) => isAddonLine(p) && !줄.some((m) => !isAddonLine(m) && m?.id == p?.id))) {
-      return ['{{n}}번째 배송지: 추가상품은 본상품과 같은 곳으로 보내 주세요.', { n: k + 1 }];
+      return ['{{n}}번째 배송지: 추가상품은 본상품과 같은 곳으로 보내 주세요.', { n: k + 1 }, { 곳: k, 칸: 'items' }];
     }
   }
   return null;
 };
 
-// 담은 수량을 배송지에 똑같이 나눈다(나머지는 앞 배송지부터 하나씩)
-export const 똑같이나누기 = (곳들, products) => (곳들 ?? []).map((곳, k) => ({
-  ...곳,
-  수량: Object.fromEntries((products ?? []).map((p, i) => {
-    const 전체 = Number(p?.order_count) || 0;
-    const 몫 = Math.floor(전체 / 곳들.length);
-    return [i, 몫 + (k < 전체 % 곳들.length ? 1 : 0)];
-  })),
-}));
+// 나눠 보내기 수량 바꾸기(11/23 다시 짬). 배송지 1 이 「아직 다른 곳으로 안 옮긴 것」을 들고 있는 기본 자리다
+// (나눠보내기를 고르면 전부 배송지 1 에 담긴다).
+//   다른 배송지에서 늘리면 → 아직 안 나눈 수량에서 먼저, 모자라면 배송지 1 에서 옮겨 온다.
+//   다른 배송지에서 줄이면 → 배송지 1 로 돌려놓는다(안 나눈 수량이 생기지 않게).
+//   배송지 1 에서 늘리면 → 아직 안 나눈 수량에서만. 줄이면 → 안 나눈 수량으로 남고 노란 안내가 뜬다(어디로 보낼지는 손님이 정한다).
+// 예전엔 배송지 2 의 「+」가 막혀 있어(남은 수량 0) 배송지 1 에서 먼저 빼야 한다는 걸 손님이 알아야 했다.
+// 숫자 칸에 바로 적어도 같은 규칙이고, 옮길 수 있는 만큼까지만 들어간다.
+export const 수량옮기기 = (곳들, products, k, i, v) => {
+  const 남음 = 남은수량(곳들, products);
+  const 지금 = Number(곳들[k]?.수량?.[i]) || 0;
+  const 첫 = Number(곳들[0]?.수량?.[i]) || 0;
+  const 안나눔 = Math.max(0, 남음[i]);
+  const 최대 = 지금 + 안나눔 + (k > 0 ? 첫 : 0);
+  const n = Math.max(0, Math.min(최대, Number(String(v).replace(/[^0-9]/g, '')) || 0));
+  const 차 = n - 지금;
+  let 첫새 = 첫;
+  if (k > 0 && 차 > 0) 첫새 = 첫 - Math.max(0, 차 - 안나눔);
+  if (k > 0 && 차 < 0) 첫새 = 첫 - 차;
+  return (곳들 ?? []).map((곳, j) => {
+    if (j === k) return { ...곳, 수량: { ...곳.수량, [i]: n } };
+    if (j === 0 && 첫새 !== 첫) return { ...곳, 수량: { ...곳.수량, [i]: 첫새 } };
+    return 곳;
+  });
+};
+// 이 배송지에서 「+」를 누를 수 있나(옮겨 올 것이 있나)
+export const 더담기가능 = (곳들, products, k, i) => {
+  const 남음 = 남은수량(곳들, products);
+  return Math.max(0, 남음[i]) + (k > 0 ? (Number(곳들[0]?.수량?.[i]) || 0) : 0) > 0;
+};
+// 위 상품 목록에서 수량만 바꾸면 그 차이를 배송지 1 에서 더하고 뺀다(주문서 OrderSheet 가 부른다).
+//   늘면 배송지 1 에 더한다. 줄면 배송지 1 에서 먼저 빼고, 모자라면 뒤 배송지부터 뺀다(손님이 마지막에 나눈 곳부터).
+export const 주문수량반영 = (곳들, 전수량, 새수량) => (새수량 ?? []).reduce((acc, n, i) => {
+  const 차 = (Number(n) || 0) - (Number(전수량?.[i]) || 0);
+  if (!차) return acc;
+  const 수 = acc.map((곳) => Number(곳?.수량?.[i]) || 0);
+  if (차 > 0) 수[0] += 차;
+  else {
+    let 뺄 = -차;
+    for (const k of [0, ...수.map((_, j) => 수.length - 1 - j).filter((j) => j > 0)]) {
+      const 빼기 = Math.min(뺄, 수[k]);
+      수[k] -= 빼기; 뺄 -= 빼기;
+      if (!뺄) break;
+    }
+  }
+  return acc.map((곳, k) => ({ ...곳, 수량: { ...(곳?.수량 ?? {}), [i]: 수[k] } }));
+}, 곳들 ?? []);
+// 배송지를 지우면 그곳에 나눠 둔 수량은 배송지 1 로 돌려놓는다(지운 곳 몫이 「안 나눈 수량」으로 떠돌지 않게)
+export const 배송지빼기 = (곳들, products, k) => {
+  const 남길 = (곳들 ?? []).filter((_, j) => j !== k);
+  if (!남길.length) return 남길;
+  const 뺀 = 곳들[k]?.수량 ?? {};
+  if (!Object.values(뺀).some((n) => Number(n) > 0)) return 남길;
+  남길[0] = { ...남길[0], 수량: Object.fromEntries((products ?? []).map((_, i) => [i, (Number(남길[0]?.수량?.[i]) || 0) + (Number(뺀[i]) || 0)])) };
+  return 남길;
+};
 
 // 줄 이름 — 상품명 · 고른 옵션. 추가상품 표시는 화면 언어로(t = translate).
 //   상품명도 화면 언어로(장바구니 CheckoutCartProduct 와 같은 formatLang, 2026-11-22) — 외국어 화면에서 이 칸만 한국어였다.
@@ -102,12 +150,9 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
   // 접기·펴기는 손님이 누를 때만(「입력 완료」·「수정」·「배송지 추가」). 칸이 다 찼다고 저절로 접지 않는다.
   const 접기 = (k) => 고치기(k, { 접음: true });
   const 펴기 = (k) => 고치기(k, { 접음: false });
-  const 수량바꾸기 = (k, i, v) => {
-    const 지금 = Number(곳들[k]?.수량?.[i]) || 0;
-    const 최대 = 지금 + Math.max(0, 남음[i]);
-    const n = Math.max(0, Math.min(최대, Number(String(v).replace(/[^0-9]/g, '')) || 0));
-    고치기(k, { 수량: { ...곳들[k].수량, [i]: n } });
-  };
+  const 수량바꾸기 = (k, i, v) => set곳들(수량옮기기(곳들, products, k, i, v));
+  // 나눠 보내기에서 지우면 그 곳 수량은 배송지 1 로(같은 상품 보내기는 수량을 안 쓴다)
+  const 지우기 = (k) => set곳들(방식 === 'split' ? 배송지빼기(곳들, products, k) : 곳들.filter((_, j) => j !== k));
   const 담은개수 = products.reduce((s, p) => s + (Number(p?.order_count) || 0), 0);
   // 1개만 담았으면 나눌 것이 없다(사장님 11/20) — 나눠 보내기 단추를 막고, 나눠 보내기 중에 1개가 되면 같은 상품 보내기로 돌린다
   const 나눔가능 = 담은개수 >= 2;
@@ -162,17 +207,25 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
             ? translate('위에 담은 상품({{count}}개)을 받는 분마다 똑같이 보냅니다. 배송지 {{n}}곳이면 {{total}}개를 결제합니다.', { count: 담은개수, n: 곳들.length, total: 담은개수 * 곳들.length })
             : translate('위에 담은 상품({{count}}개)을 배송지에 나눠 보냅니다. 배송지마다 보낼 수량을 정해 주세요.', { count: 담은개수 })}
         </Typography>
+        {/* 나눠 보내기가 어떻게 움직이는지 한 줄로(11/23) — 「+」가 어디서 가져오는지 몰라 배송지 1 에서 먼저 빼야 하나 헤맸다 */}
+        {방식 === 'split' && (
+          <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5, wordBreak: 'keep-all' }}>
+            {translate('처음엔 모두 배송지 1에 담겨 있습니다. 다른 배송지에서 +를 누르면 배송지 1에서 하나씩 옮겨 오고, −를 누르면 배송지 1로 돌아갑니다.')}
+          </Typography>
+        )}
         <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5, wordBreak: 'keep-all' }}>
           {배송비글}{섬글 ? ` ${섬글}` : ''}
         </Typography>
       </Box>
 
-      {/* 나눠 보내기: 아직 나누지 않은 수량 — 0 이 아니면 결제할 수 없다 */}
+      {/* 나눠 보내기: 아직 나누지 않은 수량 — 0 이 아니면 결제할 수 없다.
+          「똑같이 나누기」 단추는 뺐다(11/23 사장님). 남는 개수가 상품마다 늘 1번 배송지로 가서 상품이 여러 종류면
+          뒤 배송지가 비거나(1개씩 3종류 → 3곳이면 3/0/0) 추가상품만 따로 가 결제가 막혔다. 다른 곳(우커머스·쇼피파이 앱 등)도
+          손님이 배송지마다 수량을 직접 정한다 — 나눠보내기를 고르는 손님은 어디로 몇 개 보낼지 이미 정해 둔 경우가 대부분이다. */}
       {방식 === 'split' && (
         <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
-          <Button size="small" variant="outlined" onClick={() => set곳들(똑같이나누기(곳들, products))}>{translate('똑같이 나누기')}</Button>
           {남음.some((n) => n !== 0) && (
-            <Box sx={{ p: 1, borderRadius: 1, bgcolor: 'warning.lighter', flexGrow: 1 }}>
+            <Box id="multi-split-remain" sx={{ p: 1, borderRadius: 1, bgcolor: 'warning.lighter', flexGrow: 1, scrollMarginTop: 160 }}>
               {products.map((p, i) => 남음[i] !== 0 && (
                 <Typography key={i} variant="body2" sx={{ color: 'warning.darker' }}>
                   {남음[i] > 0
@@ -194,7 +247,7 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
         // 손님이 접은 배송지는 한 줄로 보인다(그사이 칸이 비면 다시 편다)
         if (곳.접음 && 곳완성(곳, isValidPhone)) {
           return (
-            <Paper key={곳.키} variant="outlined" sx={{ p: 1.5, ...(막힘 || (방식 === 'split' && !개수) ? { borderColor: 'error.main' } : {}) }}>
+            <Paper key={곳.키} id={`multi-dest-${k}`} variant="outlined" sx={{ p: 1.5, scrollMarginTop: 160, ...(막힘 || (방식 === 'split' && !개수) ? { borderColor: 'error.main' } : {}) }}>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                   <Typography variant="subtitle2" sx={{ wordBreak: 'keep-all' }}>{k + 1}. {곳.receiver} <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>{곳.addr_phone}</Box></Typography>
@@ -206,7 +259,7 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
                 </Box>
                 <Button size="small" onClick={() => 펴기(k)}>{translate('수정')}</Button>
                 {곳들.length > 2 && (
-                  <IconButton size="small" aria-label={translate('이 배송지 삭제')} onClick={() => set곳들(곳들.filter((_, i) => i !== k))}>
+                  <IconButton size="small" aria-label={translate('이 배송지 삭제')} onClick={() => 지우기(k)}>
                     <Iconify icon="eva:trash-2-outline" />
                   </IconButton>
                 )}
@@ -215,7 +268,7 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
           );
         }
         return (
-          <Paper key={곳.키} variant="outlined" sx={{ p: 2, borderColor: 'primary.main' }}>
+          <Paper key={곳.키} id={`multi-dest-${k}`} variant="outlined" sx={{ p: 2, borderColor: 'primary.main', scrollMarginTop: 160 }}>
             <Stack spacing={1.5}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="subtitle2">{translate('배송지 {{n}}', { n: k + 1 })}</Typography>
@@ -224,22 +277,22 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
                     <Button size="small" variant="soft" startIcon={<Iconify icon="eva:list-fill" />} onClick={() => set주소록대상(k)}>{translate('주소록에서 선택')}</Button>
                   )}
                   {곳들.length > 2 && (
-                    <IconButton size="small" aria-label={translate('이 배송지 삭제')} onClick={() => set곳들(곳들.filter((_, i) => i !== k))}>
+                    <IconButton size="small" aria-label={translate('이 배송지 삭제')} onClick={() => 지우기(k)}>
                       <Iconify icon="eva:trash-2-outline" />
                     </IconButton>
                   )}
                 </Stack>
               </Stack>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-                <TextField fullWidth size="small" label={translate('받는 사람')} value={곳.receiver} inputProps={{ maxLength: 이름최대 }}
+                <TextField fullWidth size="small" id={`multi-receiver-${k}`} label={translate('받는 사람')} value={곳.receiver} inputProps={{ maxLength: 이름최대 }}
                   onChange={(e) => 고치기(k, { receiver: e.target.value })} />
-                <TextField fullWidth size="small" label={translate('연락처')} value={곳.addr_phone} inputMode="tel" placeholder="010-1234-5678"
+                <TextField fullWidth size="small" id={`multi-addr_phone-${k}`} label={translate('연락처')} value={곳.addr_phone} inputMode="tel" placeholder="010-1234-5678"
                   error={!!곳.addr_phone && !isValidPhone(곳.addr_phone)}
                   onChange={(e) => 고치기(k, { addr_phone: sanitizePhoneInput(e.target.value) })} />
               </Stack>
               <Stack direction="row" spacing={1} alignItems="flex-start">
                 <TextField size="small" label={translate('우편번호')} value={곳.zonecode} InputProps={{ readOnly: true }} sx={{ width: 140 }} />
-                <Button variant="outlined" sx={{ height: 40 }} onClick={() => on우편번호(k)}>{translate('우편번호 검색')}</Button>
+                <Button id={`multi-addr-${k}`} variant="outlined" sx={{ height: 40 }} onClick={() => on우편번호(k)}>{translate('우편번호 검색')}</Button>
               </Stack>
               <TextField fullWidth size="small" label={translate('주소')} value={곳.addr} InputProps={{ readOnly: true }} placeholder={translate('우편번호 검색으로 입력')} />
               {/* id — 우편번호 검색이 끝나면 주문서가 이 칸으로 커서를 옮긴다(OrderSheet onCompletePost) */}
@@ -249,7 +302,7 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
                 onChange={(e) => 고치기(k, { delivery_memo: e.target.value })} />
               {/* 나눠 보내기: 이 곳에 보낼 상품과 수량 */}
               {방식 === 'split' && (
-                <Box sx={{ borderTop: '1px dashed', borderColor: 'divider', pt: 1.25 }}>
+                <Box id={`multi-items-${k}`} sx={{ borderTop: '1px dashed', borderColor: 'divider', pt: 1.25 }}>
                   <Typography variant="caption" sx={{ color: 'text.secondary' }}>{translate('이 곳에 보낼 상품')}</Typography>
                   <Stack spacing={0.75} sx={{ mt: 0.75 }}>
                     {products.map((p, i) => {
@@ -261,7 +314,7 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
                           {/* 숫자를 바로 칠 수 있다 — 30개를 +로 서른 번 누르게 하지 않는다 */}
                           <TextField size="small" value={지금} onChange={(e) => 수량바꾸기(k, i, e.target.value)}
                             inputProps={{ inputMode: 'numeric', 'aria-label': translate('수량'), style: { textAlign: 'center', padding: '4px 0', width: 44 } }} />
-                          <IconButton size="small" disabled={남음[i] <= 0} onClick={() => 수량바꾸기(k, i, 지금 + 1)} aria-label={translate('더하기')}><Iconify icon="eva:plus-fill" /></IconButton>
+                          <IconButton size="small" disabled={!더담기가능(곳들, products, k, i)} onClick={() => 수량바꾸기(k, i, 지금 + 1)} aria-label={translate('더하기')}><Iconify icon="eva:plus-fill" /></IconButton>
                         </Stack>
                       );
                     })}

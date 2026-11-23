@@ -17,7 +17,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, onPayProductsByForspayMulti, getOrderFormFields, orderAmountBreakdown, 배송정책 } from 'src/utils/shop-util';
-import MultiShipEditor, { 처음곳들, 곳별금액, 곳의줄, 여러곳검사, 최대곳 } from 'src/views/shop/order/MultiShipEditor';
+import MultiShipEditor, { 처음곳들, 곳별금액, 곳의줄, 여러곳검사, 최대곳, 주문수량반영 } from 'src/views/shop/order/MultiShipEditor';
 import { saveRetryDraft, takeRetryDraft, saveSessionDraft, takeSessionDraft, clearOrderDraft } from 'src/utils/order-draft';
 
 import { findMissingRequired } from 'src/data/order-form-types';
@@ -139,17 +139,27 @@ export default function OrderSheet({ router }) {
   // 보내는 방식 — same: 담은 상품을 받는 분마다 똑같이(수량이 배송지 수만큼 곱해진다, 기본) / split: 담은 수량을 배송지에 나눈다
   const [보내는방식, set보내는방식] = useState('same');
   const [우편대상, set우편대상] = useState(null);   // 우편번호 검색이 채울 배송지 번호(null 이면 보통 배송지)
-  // 상품 줄이 바뀌면(삭제·수량 변경) 나눠 둔 수량을 처음으로 되돌린다 — 수량은 줄 번호로 기억해서,
+  // 상품 줄이 바뀌면(줄이 빠지거나 더해짐) 나눠 둔 수량을 처음으로 되돌린다 — 수량은 줄 번호로 기억해서,
   //   줄이 빠지면 번호가 밀려 다른 상품에 붙는다(합계가 우연히 맞으면 검사도 통과한다). 주소는 그대로 둔다.
-  const 상품꼴 = products.map((p) => `${p?.id}/${p?.addon_line ?? 0}/${JSON.stringify(p?.groups ?? [])}/${p?.order_count}`).join('|');
-  const 지난상품꼴 = useRef('');
+  // 수량만 바뀌면 되돌리지 않고 그 차이를 배송지 1 에서 더하고 뺀다(11/23) — 배송지 1 이 아직 안 옮긴 것을 들고 있는 자리라
+  //   (MultiShipEditor 수량옮기기) 손님이 나눠 둔 다른 배송지는 그대로 남는다. 예전엔 수량 하나 바꿔도 전부 다시 나눠야 했다.
+  // 줄 모양은 상품·추가상품 여부·고른 옵션 id 로만 본다 — 옵션 객체 통째(JSON)로 보면 서버에서 최신 가격을 다시 받아 올 때
+  //   (runSync) 옵션 정보만 새로 와도 「바뀌었다」고 나눈 수량이 풀렸다.
+  const 줄모양 = products.map((p) => `${p?.id}/${p?.addon_line ?? 0}/${(p?.groups ?? []).map((g) => `${g?.id ?? g?.group_name ?? ''}:${(g?.options ?? []).map((o) => o?.id ?? o?.option_name ?? '').join(',')}`).join(';')}`).join('|');
+  const 줄수량 = products.map((p) => Number(p?.order_count) || 0);
+  const 지난상품 = useRef(null);
   useEffect(() => {
-    if (여러곳 && 보내는방식 === 'split' && 지난상품꼴.current && 지난상품꼴.current !== 상품꼴) {
-      set곳들((prev) => prev.map((곳, k) => ({ ...곳, 수량: k === 0 ? Object.fromEntries(products.map((p, i) => [i, Number(p?.order_count) || 0])) : {} })));
-      toast(translate('상품이 바뀌어 배송지별 수량을 처음으로 되돌렸습니다. 다시 나눠 주세요.'));
+    const 지난 = 지난상품.current;
+    지난상품.current = { 모양: 줄모양, 수량: 줄수량 };
+    // 처음 불러올 때(빈 목록 → 상품)는 바뀐 것이 아니다 — 되살린 여러 곳 상태(orderDraft)의 나눈 수량을 지키지 않으면 새로고침마다 풀린다
+    if (!지난 || !지난.모양 || !여러곳) return;
+    if (지난.모양 !== 줄모양) {
+      set곳들((prev) => prev.map((곳, k) => ({ ...곳, 수량: k === 0 ? Object.fromEntries(줄수량.map((n, i) => [i, n])) : {} })));
+      if (보내는방식 === 'split') toast(translate('상품이 바뀌어 배송지별 수량을 처음으로 되돌렸습니다. 다시 나눠 주세요.'));
+      return;
     }
-    지난상품꼴.current = 상품꼴;
-  }, [상품꼴, 여러곳, 보내는방식]);
+    if (줄수량.some((n, i) => n !== 지난.수량[i])) set곳들((prev) => 주문수량반영(prev, 지난.수량, 줄수량));
+  }, [줄모양, 줄수량.join('|'), 여러곳, 보내는방식]);
   // 받는 사람이 주문자와 같은 경우가 대부분이다. 로그인한 손님에게 이름·연락처를 다시
   // 치게 하지 않는다 — 기본으로 켜 두고, 다른 사람에게 보낼 때만 끄면 된다.
   // (비회원은 주문자 정보를 이 화면에서 직접 입력하므로 기본 꺼짐 — 아직 채울 값이 없다)
@@ -529,6 +539,20 @@ export default function OrderSheet({ router }) {
     setPostOpen(false);
   };
 
+  // 여러 곳으로 배송 검사에 걸리면 그 자리로 화면을 옮긴다(11/23).
+  //   결제수단은 맨 아래라 토스트만으로는 위쪽 어느 배송지가 문제인지 찾아 올라가야 했다.
+  //   접혀 있으면 펴고, 문제 칸(받는 사람·연락처·우편번호 검색·보낼 상품)에 커서를 둔다. 남은 수량이면 노란 안내로.
+  const 여러곳문제보이기 = (자리) => {
+    if (!자리) return;
+    if (자리.곳 !== undefined) set곳들((prev) => prev.map((곳, i) => (i === 자리.곳 && 곳.접음 ? { ...곳, 접음: false } : 곳)));
+    setTimeout(() => {
+      const 상자 = document.getElementById(자리.남음 ? 'multi-split-remain' : `multi-dest-${자리.곳}`);
+      상자?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const 칸 = 자리.남음 || !자리.칸 || 자리.칸 === 'items' ? null : document.getElementById(`multi-${자리.칸}-${자리.곳}`);
+      칸?.focus?.({ preventScroll: true });
+    }, 120);
+  };
+
   // ── 결제 진행 전 공통 검증(포인트·약관) ──
   const guardBeforePay = () => {
     // 이미 접수된 주문이 있으면 다른 결제수단으로 하나 더 만들지 못하게 막는다.
@@ -662,9 +686,9 @@ export default function OrderSheet({ router }) {
     if (여러곳) {
       // 여러 곳으로 배송 — 배송지·수량 나누기·추가상품·배송 안 함 지역(서버 여러곳주문도 같은 것을 본다)
       const 문제 = 여러곳검사(곳들, products, isValidPhoneNumber, 보내는방식);
-      if (문제) { toast.error(translate(문제[0], 문제[1])); return false; }
+      if (문제) { toast.error(translate(문제[0], 문제[1])); 여러곳문제보이기(문제[2]); return false; }
       const 막힌곳 = 곳별금액(곳들, products, 보내는방식).findIndex((t) => t.island?.blocked);
-      if (막힌곳 >= 0) { toast.error(translate('{{n}}번째 배송지: 이 쇼핑몰은 그 지역으로 배송하지 않습니다.', { n: 막힌곳 + 1 })); return false; }
+      if (막힌곳 >= 0) { toast.error(translate('{{n}}번째 배송지: 이 쇼핑몰은 그 지역으로 배송하지 않습니다.', { n: 막힌곳 + 1 })); 여러곳문제보이기({ 곳: 막힌곳, 칸: 'addr' }); return false; }
       if (parseFloat(payData.use_point || 0) > 0) { toast.error(translate('여러 곳으로 배송할 때는 포인트를 사용할 수 없습니다.')); return false; }
     }
     return true;

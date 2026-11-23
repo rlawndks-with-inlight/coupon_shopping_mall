@@ -11,6 +11,7 @@ import localStorageAvailable from 'src/utils/localStorageAvailable';
 import { useRouter } from 'next/router';
 import { apiManager } from 'src/utils/api';
 import { getDemoBrandDns, getDemoNum, maskDemoBrandData } from 'src/components/main-site/frameList';
+import { 접속몰주소 } from 'src/utils/visit-dns';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -141,20 +142,12 @@ export function SettingsProvider({ children }) {
   }, []);
   const settingPlatform = async () => {
     try {
-      let dnsHost = process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0];
-      // 메인 사이트(랜딩)로 취급할 호스트: 메인 도메인 / localhost
-      const mainHosts = [process.env.MAIN_FRONT_URL, 'localhost', '127.0.0.1'].filter(Boolean);
-      const isMainHost = mainHosts.includes(dnsHost);
-      const rootDomain = (process.env.MAIN_FRONT_URL || '').replace(/^www\./, '');
-      // demo-N.<도메인> 미리보기: 해당 프레임의 기존 브랜드 dns로 조회
-      const demoBrandDns = getDemoBrandDns(dnsHost);
-      const demoNum = getDemoNum(dnsHost); // 원래 호스트에서 데모 번호 추출 (dnsHost 재할당 전)
-      if (demoBrandDns) {
-        dnsHost = demoBrandDns;
-      } else if (isMainHost && rootDomain) {
-        // 메인 호스트는 마스터 브랜드(메인 도메인) 조회
-        dnsHost = rootDomain;
-      }
+      // 조회할 몰 주소 — 데모 미리보기는 연결한 실제 몰, 메인 주소는 본사 몰(src/utils/visit-dns.js).
+      //   API 머리말(X-Shop-Dns, src/utils/axios.js)도 같은 함수로 정하므로 둘이 어긋나지 않는다.
+      const 원래호스트 = process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0];
+      const demoBrandDns = getDemoBrandDns(원래호스트);
+      const demoNum = getDemoNum(원래호스트);
+      const dnsHost = 접속몰주소(window.location.host);
       const { data: response } = await axios.get(`/api/domain?dns=${dnsHost}`);
       let dns_data = response?.data;
       // 데모 미리보기(demo-N.*)에서는 실제 가맹점의 민감 사업자/개인정보를 '데모N'으로 가린다.

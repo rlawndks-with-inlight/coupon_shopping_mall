@@ -45,6 +45,7 @@ import DemoNotice from 'src/components/main-site/DemoNotice'
 import LogoScaleStyle from 'src/components/elements/shop/LogoScaleStyle'
 import BrandNotFound from 'src/components/main-site/BrandNotFound'
 import SearchBody from 'src/components/seo/SearchBody'
+import { 샵고아이콘, 데모호스트 } from 'src/utils/seo-host'
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -143,6 +144,7 @@ const App = props => {
   const 본문서버 = 서버본문(메인사이트, router.pathname);
   // 검색 노출 2단계-②: 가맹점 몰은 몰 정보를 기다리는 동안 검색엔진용 본문을 숨겨서 싣는다(SearchBody).
   //   데모 미리보기(demo-N)는 실제 가맹점 정보를 가리는 화면이라 싣지 않고, 「검색엔진 노출」을 끈 몰도 뺀다.
+  const rss주소 = (호스트 && !데모호스트(호스트) && !검색막힘(hd)) ? `https://${호스트}/rss.xml` : '';
   const 검색용본문 = (!메인사이트 && !getDemoBrandDns(호스트) && !검색막힘(hd))
     ? <SearchBody hd={hd} pathname={router.pathname} /> : null;
 
@@ -155,12 +157,20 @@ const App = props => {
           {이주소 && <link rel='canonical' href={이주소} />}
           {(색인제외(router.asPath) || 검색막힘(hd)) && <meta name='robots' content='noindex' />}
           {/* 값이 있을 때만 그린다 — 없으면 href='null' 이 나가 /지금경로/null 404 가 난다(faviconUrl 주석) */}
-          {favicon && (
+          {favicon ? (
             <>
               <link rel='shortcut icon' href={favicon} />
               <link rel='apple-touch-icon' sizes='180x180' href={favicon} />
             </>
-          )}
+          ) : 메인사이트 ? (
+            // 샵고 메인은 브랜드에 파비콘·로고가 없어 아이콘이 아예 없었다(2026-11-23) — 기본 샵고 아이콘(pages/favicon.ico.js)
+            <>
+              <link rel='shortcut icon' href='/favicon.ico' />
+              <link rel='apple-touch-icon' sizes='180x180' href={샵고아이콘.png180} />
+            </>
+          ) : null}
+          {/* 네이버 서치어드바이저 RSS(pages/rss.xml.js). 데모 미리보기·검색 노출 끈 몰은 RSS 가 없다(404). */}
+          {rss주소 && <link rel='alternate' type='application/rss+xml' title={hd?.name || 'RSS'} href={rss주소} />}
           <meta name='keywords' content={head_data?.name || headData?.name} />
           <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
           <meta property='og:type' content='website' />

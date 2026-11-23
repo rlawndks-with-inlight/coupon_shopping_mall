@@ -2,6 +2,16 @@ import axios from 'axios';
 import { getCookie } from './react-cookie';
 import { HOST_API_KEY } from 'src/config-global';
 import { isDemoHost } from 'src/components/main-site/frameList';
+import { 접속몰주소 } from './visit-dns';
+
+// 모든 API 요청에 「지금 몰 주소」를 붙인다(X-Shop-Dns). 백엔드는 dns 쿠키가 없을 때만 이 값으로 몰을 정한다
+// (utils.js/dns-fallback.js — 쿠키를 안 싣는 네이버 검색 로봇이 몰을 빈 화면으로 보던 문제, 2026-11-23).
+// 아래 instance 들을 만들기 전에 기본값에 넣어야 그 instance 들에도 실린다(axios.create 는 만들 때 기본값을 복사한다).
+// 머리말 값은 ASCII 여야 한다 — 한글 도메인(IDN)은 브라우저가 이미 punycode 로 준다.
+if (typeof window !== 'undefined') {
+  const 몰주소 = 접속몰주소(window.location.host).toLowerCase();
+  if (/^[a-z0-9.-]+$/.test(몰주소) && 몰주소.includes('.')) axios.defaults.headers.common['X-Shop-Dns'] = 몰주소;
+}
 
 export const axiosIns = (host, protocol) => {
   let dns_info = {

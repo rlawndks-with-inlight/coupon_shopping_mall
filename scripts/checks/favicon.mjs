@@ -54,8 +54,15 @@ for (const [이름, 경로] of [['_app.js', 'src/pages/_app.js'], ['head 컴포�
         !/href=\{[^}]*favicon_img/.test(src),
         "href={dns?.favicon_img} 는 값이 없을 때 href='null' 이 되어 /지금경로/null 404 를 만든다");
     t(`${이름} 이 값이 있을 때만 <link> 를 그린다`,
-        /\{favicon && \(/.test(src),
+        /\{favicon && \(/.test(src) || /\{favicon \? \(/.test(src),
         '조건 없이 그리면 href 가 빈 문자열이 되어 지금 페이지를 아이콘으로 다시 부른다');
+}
+// 예외 하나: 샵고 메인 사이트는 브랜드에 파비콘·로고가 없어 아이콘이 아예 없었다(2026-11-23).
+//   남의 마크가 아니라 우리 마크라 기본 샵고 아이콘을 건다 — 가맹점 몰에는 여전히 대신 걸지 않는다.
+{
+    const app = 읽기('src/pages/_app.js').replace(/\r/g, '');
+    t('_app.js: 파비콘 없을 때 기본 아이콘은 메인 사이트에만',
+        /\{favicon \? \([\s\S]{0,200}\) : 메인사이트 \? \([\s\S]{0,300}\) : null\}/.test(app) && /샵고아이콘\.png180/.test(app));
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

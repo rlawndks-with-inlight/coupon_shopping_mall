@@ -127,7 +127,7 @@ t('⑦ 보내는 방식 기본은 같은 상품 보내기, 요약 금액·개수
   && /const 곱 = 여러곳 && 보내는방식 === 'same' \? Math\.max\(1, 곳들\.length\) : 1;/.test(주문서));
 t('⑦ 결제에 배송지마다 보낼 줄을 넘긴다', /곳들\.map\(\(곳\) => \(\{ \.\.\.곳, 줄: 곳의줄\(곳, products, 보내는방식\) \}\)\)/.test(주문서) && /Array\.isArray\(곳\?\.줄\) \? 곳\.줄\.map/.test(util));
 t('⑦ 회원은 주소록에서 고른다, 다 쓴 배송지는 접는다, 배송비 규칙을 몰 금액으로 적는다', /addressList=\{addressList\}/.test(주문서) && /set주소록대상\(k\)/.test(편집)
-  && /if \(펼친 !== k && 곳완성\(곳, isValidPhone\)\)/.test(편집) && /배송비는 배송지마다 \{\{fee\}\}이고, 한 곳에 \{\{min\}\} 이상 보내면 그 곳은 무료입니다\./.test(편집));
+  && /if \(접힘\.has\(곳\.키\) && 곳완성\(곳, isValidPhone\)\)/.test(편집) && /배송비는 배송지마다 \{\{fee\}\}이고, 한 곳에 \{\{min\}\} 이상 보내면 그 곳은 무료입니다\./.test(편집));
 t('⑦ 결제 후: 완료 화면에 「배송지 N곳」, 비회원 조회는 목록부터, 주문 상태에 받는 분', /sessionStorage\.setItem\('multiShipOrder'/.test(util)
   && /배송지 \{\{n\}\}곳으로 나눠 주문되었습니다/.test(앞('src/views/shop/order/PayResultView.js'))
   && /\(여러곳주문 \? null : 방금주문\)/.test(앞('src/pages/shop/auth/order-check.js')) && /row\?\.pay_group \? ` · \$\{translate\('여러 곳 배송'\)\}/.test(앞('src/utils/function.js')));
@@ -135,6 +135,16 @@ t('⑧ 결제실패/미완료는 묶음을 첫 주문 한 줄로 접고 「몇 �
   /if \(await hasColumn\('transactions', 'pay_group'\)\) sql \+= ` AND \$\{묶음첫줄식\(table_name\)\} `;/.test(백('controllers/transaction.controller.js'))
   && /String\(k\) === 'failed' && await hasColumn\('transactions', 'pay_group'\)/.test(백('controllers/transaction.controller.js'))
   && /pay_group IS NULL OR \$\{t\}\.ord_num = \$\{t\}\.pay_group/.test(pg) && /배송지 \{row\.group_count\}곳 · 합계/.test(앞('src/components/manager/OrderColumns.js')));
+
+// 11/23 포스몰 — 배송지 2 에서 주소를 고르자마자 상세주소·요청사항을 쓰기 전에 접혔다. 접힘은 손님이 누를 때만
+{
+  const 접힘부분 = 편집.slice(편집.indexOf('const [접힘, set접힘]'), 편집.indexOf('const 고치기 ='));
+  t('⑬ 접힘은 처음 열 때 이미 다 쓴 배송지만, 그 뒤엔 단추로만', /useState\(\(\) => new Set\(곳들\.filter\(\(곳\) => 곳완성\(곳, isValidPhone\)\)/.test(접힘부분));
+  t('⑬ 「입력 완료」가 그 배송지를 접는다', /onClick=\{\(\) => 접기\(\[곳\.키\]\)\}>\{translate\('입력 완료'\)\}/.test(편집));
+  t('⑬ 「수정」이 그 배송지를 편다', /onClick=\{\(\) => 펴기\(곳\.키\)\}>\{translate\('수정'\)\}/.test(편집));
+  t('⑬ 고치기(칸 입력)는 접힘을 건드리지 않는다', !/접기|set접힘/.test(편집.slice(편집.indexOf('const 고치기 ='), 편집.indexOf('const 수량바꾸기'))));
+  t('⑬ 옛 「펼친」 상태가 남지 않았다', !/set펼친|\[펼친,/.test(편집));
+}
 
 // 11/20 저녁 — 이름은 「여러 곳으로 배송」(11/21 선물 등 뺌), 작은 체크칸 대신 꽉 찬 두 단추, 1개만 담으면 나눠 보내기 막기
 const 고르기 = 주문서.slice(주문서.indexOf('{(여러곳가능 || 여러곳) && ('), 주문서.indexOf('{여러곳 ? ('));

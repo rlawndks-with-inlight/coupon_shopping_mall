@@ -7,6 +7,7 @@ import _ from "lodash";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import { productSortTypeList } from "src/utils/format";
+import { 글자수표시, 칸최대 } from 'src/utils/char-limit';
 
 const ProductPropertyGroupEdit = () => {
   const { setModal } = useModal()
@@ -57,6 +58,7 @@ const ProductPropertyGroupEdit = () => {
                   <TextField
                     label='상품특성 그룹명'
                     value={item.property_group_name}
+                    {...글자수표시(item.property_group_name, 칸최대.특성그룹명)}
                     placeholder="등급, 편의시설"
                     onChange={(e) => {
                       setItem(

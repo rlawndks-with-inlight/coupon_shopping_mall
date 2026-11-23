@@ -9,6 +9,7 @@ import { toast } from 'react-hot-toast';
 import ManagerLayout from 'src/layouts/manager/ManagerLayout';
 import { apiManager } from 'src/utils/api';
 import { useSettingsContext } from 'src/components/settings';
+import { 글자수표시, 칸최대 } from 'src/utils/char-limit';
 import {
     ORDER_FORM_TYPES, PII_TYPES, CHOICE_TYPES, DATE_TYPES, LENGTH_TYPES,
 } from 'src/data/order-form-types';
@@ -166,6 +167,7 @@ const OrderFormPage = () => {
                                 <Stack spacing={1.5}>
                                     <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5} alignItems={{ md: 'center' }}>
                                         <TextField label="항목 이름" size="small" value={f.label ?? ''} sx={{ flex: 1 }}
+                                            {...글자수표시(f.label, 칸최대.입력항목이름)}
                                             onChange={(e) => 항목바꾸기(i, j, 'label', e.target.value)} />
                                         <TextField label="유형" size="small" select value={f.field_type ?? 'text'}
                                             sx={{ width: { xs: '100%', md: 210 } }}

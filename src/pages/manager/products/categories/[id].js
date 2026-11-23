@@ -18,6 +18,7 @@ import _ from "lodash";
 import { apiManager } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
 import { 상단메뉴있는프레임 } from 'src/data/header-menu-frames';
+import { 글자수표시, 칸최대 } from 'src/utils/char-limit';
 
 // ----------------------------------------------------------------------
 
@@ -490,7 +491,7 @@ const CategoryList = () => {
                                                     고객 화면에서 category_img 를 그리는 곳이 한 군데도 없다(테스트 데이터에만 있다).
                                                     올려 봐야 아무 데도 안 나오는 칸이라 가맹점 시간만 쓴다.
                                                     이미 올린 10건의 값은 DB 에 그대로 둔다 — 쓰기로 하면 그때 화면부터 만든다. */}
-                                                <TextField label={`${categoryGroup?.category_group_name}명`} value={category.category_name} onChange={(e) => {
+                                                <TextField label={`${categoryGroup?.category_group_name}명`} value={category.category_name} {...글자수표시(category.category_name, 칸최대.카테고리명)} onChange={(e) => {
                                                     setCategory({
                                                         ...category,
                                                         ['category_name']: e.target.value

@@ -20,6 +20,7 @@ import {
 import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import { apiManager } from "src/utils/api";
+import { 글자수표시, 칸최대 } from 'src/utils/char-limit';
 const PopupEdit = () => {
   const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
@@ -87,6 +88,7 @@ const PopupEdit = () => {
                   <TextField
                     label='제목'
                     value={item.popup_title}
+                    {...글자수표시(item.popup_title, 칸최대.팝업제목)}
                     onChange={(e) => {
                       setItem(
                         {

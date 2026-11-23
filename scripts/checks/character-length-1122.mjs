@@ -16,12 +16,15 @@ const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } 
 const 편집기 = 읽기(FRONT_ROOT, 'src/components/manager/ProductOptionEditor.js');
 const 상품화면 = 읽기(FRONT_ROOT, 'src/pages/manager/products/[edit_category]/[id].js');
 t('편집기: 항목 100자·내용 1000자(DB 칸과 같다)', /export const 특성최대 = \{ 항목: 100, 내용: 1000 \};/.test(편집기));
-t('편집기: 글자는 코드포인트로 센다', /export const 글자수 = \(v\) => Array\.from\(String\(v \?\? ''\)\)\.length;/.test(편집기));
+// 글자 수 세기·표시는 11/23 부터 공용(src/utils/char-limit.js) — 편집기는 가져다 쓰고 상품 화면용으로 다시 내보낸다
+const 공용 = 읽기(FRONT_ROOT, 'src/utils/char-limit.js');
+t('편집기: 글자는 코드포인트로 센다(공용)', /export const 글자수 = \(v\) => Array\.from\(String\(v \?\? ''\)\)\.length;/.test(공용)
+  && /import \{ 글자수, 글자수표시, 칸최대 \} from 'src\/utils\/char-limit';/.test(편집기) && /export \{ 글자수 \};/.test(편집기));
 t('편집기: 내용 칸은 여러 줄', /label="내용" placeholder="예시\) 국내산"\s*\n\s*multiline maxRows=\{8\}/.test(편집기));
 t('편집기: 두 칸 모두 글자 수 표시', /\{\.\.\.글자수표시\(c\?\.character_name, 특성최대\.항목\)\}/.test(편집기) && /\{\.\.\.글자수표시\(c\?\.character_value, 특성최대\.내용\)\}/.test(편집기));
 // maxLength 는 붙여 넣은 글을 소리 없이 자른다 — 넘치면 빨갛게만 하고 저장 때 막는다
 t('편집기: 상품 정보 칸에 maxLength 없음', !/character_(name|value)[\s\S]{0,300}maxLength/.test(편집기.slice(편집기.indexOf('⑤ 상품정보'))));
-t('편집기: 넘치면 error', /if \(n > 최대\) return \{ error: true,/.test(편집기));
+t('편집기: 넘치면 error(공용)', /if \(n > 최대\) return \{ error: true,/.test(공용));
 t('상품 화면: 저장 전 길이 확인(항목·내용)', /if \(글자수\(c\?\.character_name\) > 특성최대\.항목\) \{/.test(상품화면) && /if \(글자수\(c\?\.character_value\) > 특성최대\.내용\) \{/.test(상품화면));
 t('상품 화면: 편집기에서 기준을 가져온다', /import ProductOptionEditor, \{ 특성최대, 글자수 \} from 'src\/components\/manager\/ProductOptionEditor';/.test(상품화면));
 
@@ -55,7 +58,7 @@ if (!백엔드있음) {
   t('서버: 특성최대 = 프론트와 같은 100·1000', /const 특성최대 = \{ character_name: 100, character_value: 1000 \};/.test(상품));
   t('서버: 코드포인트로 센다', /Array\.from\(String\(c\?\.character_value \?\? ''\)\)\.length/.test(상품));
   // create·update 둘 다, 쓰기(insertQuery/updateQuery) 전에
-  const 검사자리 = [...상품.matchAll(/characters = cleanCharacters\(characters\);\s*\n\s*const 특성잘못 = 특성길이검사\(characters\);\s*\n\s*if \(특성잘못\) \{\s*\n\s*return response\(req, res, -100, 특성잘못, false\);/g)].map((m) => m.index);
+  const 검사자리 = [...상품.matchAll(/characters = cleanCharacters\(characters\);\s*\n\s*const 특성잘못 = 특성길이검사\(characters\) \|\| 옵션길이검사\(groups\);\s*\n\s*if \(특성잘못\) \{\s*\n\s*return response\(req, res, -100, 특성잘못, false\);/g)].map((m) => m.index);
   const 만들기 = 상품.indexOf('create: async (req, res, next) => {'), 고치기 = 상품.indexOf('update: async (req, res, next) => {');
   const 첫쓰기 = (시작) => Math.min(...['insertQuery(`${table_name}`', 'updateQuery(`${table_name}`', 'writePool.query('].map((s) => { const i = 상품.indexOf(s, 시작); return i < 0 ? Infinity : i; }));
   t('서버: create 는 상품 줄을 넣기 전에 길이 검사', 검사자리.some((i) => i > 만들기 && i < 첫쓰기(만들기) && i < 고치기));

@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { Row } from 'src/components/elements/styled-components';
 import { apiManager } from 'src/utils/api';
 import { ORDER_FORM_TYPES, CHOICE_TYPES, DATE_TYPES, LENGTH_TYPES, PII_TYPES } from 'src/data/order-form-types';
+import { 글자수, 글자수표시, 칸최대 } from 'src/utils/char-limit';
 
 // 상품 옵션 통합 편집 — 상품등록/수정 화면의 [옵션] 한 곳.
 //
@@ -45,14 +46,9 @@ const 음수막기속성 = { inputProps: { min: 0 } };
 // 글자는 DB 처럼 코드포인트로 센다(이모지 하나 = 1자). maxLength 는 쓰지 않는다 —
 //   붙여 넣은 글이 1,000자에서 소리 없이 잘려 버리므로, 넘치면 빨갛게 알리고 저장할 때 막는다.
 export const 특성최대 = { 항목: 100, 내용: 1000 };
-export const 글자수 = (v) => Array.from(String(v ?? '')).length;
-// 짧은 값(「국내산」)에 「3/1,000」을 달면 줄마다 높이만 늘어난다 — 길어질 때부터 보인다.
-const 글자수표시 = (v, 최대) => {
-    const n = 글자수(v);
-    if (n > 최대) return { error: true, helperText: `${n.toLocaleString()} / ${최대.toLocaleString()}자 · ${최대.toLocaleString()}자까지 넣을 수 있습니다` };
-    if (n >= Math.min(100, 최대 * 0.8)) return { helperText: `${n.toLocaleString()} / ${최대.toLocaleString()}자` };
-    return {};
-};
+// 글자 수 세기·표시는 관리자 짧은 칸들과 같이 쓴다(src/utils/char-limit.js, 2026-11-23).
+// 옵션 이름 30자·항목 50자·입력항목 이름 60자도 같은 표시를 단다(서버 옵션길이검사와 짝).
+export { 글자수 };
 
 const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
     // '손님이 적는 항목' 은 본사가 브랜드마다 켜 주는 기능이다(설정관리 › 데모설정).
@@ -278,6 +274,7 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                     label={추가상품인가 ? '추가상품 묶음 이름' : '옵션 이름'}
                     placeholder={추가상품인가 ? '예시) 촬영 추가' : '예시) 색상'}
                     value={g?.group_name ?? ''}
+                    {...글자수표시(g?.group_name, 칸최대.옵션이름)}
                     onChange={(e) => 그룹수정(gIdx, { group_name: e.target.value })}
                 />
                 <Button variant="outlined" size="small" sx={{ height: 40, ...숨김 }}
@@ -294,6 +291,7 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                         size="small" sx={{ flexGrow: 1 }} label="항목명"
                         placeholder={추가상품인가 ? '예시) 성장영상' : '예시) 블랙'}
                         value={o?.option_name ?? ''}
+                        {...글자수표시(o?.option_name, 칸최대.옵션항목)}
                         onChange={(e) => 옵션수정(gIdx, oIdx, { option_name: e.target.value })}
                     />
                     {/* 조합형에서는 선택옵션의 개별 가격을 안 쓴다 — 조합표에서 매긴다.
@@ -560,6 +558,7 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                             <TextField
                                 size="small" sx={{ flexGrow: 1 }} label="항목 이름" placeholder="예시) 행사일"
                                 value={f?.label ?? ''}
+                                {...글자수표시(f?.label, 칸최대.입력항목이름)}
                                 onChange={(e) => 항목수정(idx, { label: e.target.value })}
                             />
                             <TextField

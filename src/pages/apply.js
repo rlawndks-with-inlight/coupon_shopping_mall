@@ -21,6 +21,9 @@ import AgreementBox from 'src/components/main-site/AgreementBox';
 import { FRAMES } from 'src/components/main-site/frameList';
 import { useSubpageT, useFrameT } from 'src/components/main-site/landingStrings';
 
+// 칸마다 maxLength 는 신청서 DB 칸(merchant_applications)에 맞췄다(2026-11-23). 승인하면 브랜드 칸으로 옮겨 담는데,
+// 브랜드 칸도 같은 크기로 늘렸다(상호·통신판매업신고번호 120, 대표자 60). 담당자 이름은 관리자 계정 이름(암호화 칸)으로
+// 들어가 50자까지만 받는다.
 const initial = {
   business_name: '',
   business_number: '',
@@ -266,6 +269,7 @@ const ApplyPage = () => {
                 fullWidth
                 size="small"
                 value={form.business_name}
+                inputProps={{ maxLength: 120 }}
                 onChange={(e) => set('business_name', e.target.value)}
                 error={!!errors.business_name}
                 helperText={errors.business_name || ''}
@@ -279,6 +283,7 @@ const ApplyPage = () => {
                 size="small"
                 placeholder={st('apply.phBizNo')}
                 value={form.business_number}
+                inputProps={{ maxLength: 20 }}
                 onChange={(e) => set('business_number', e.target.value)}
                 error={!!errors.business_number}
                 helperText={errors.business_number || ''}
@@ -292,6 +297,7 @@ const ApplyPage = () => {
                 size="small"
                 placeholder={st('apply.phMailOrder')}
                 value={form.mail_order_number}
+                inputProps={{ maxLength: 120 }}
                 onChange={(e) => set('mail_order_number', e.target.value)}
               />
             </Field>
@@ -307,6 +313,7 @@ const ApplyPage = () => {
                 fullWidth
                 size="small"
                 value={form.ceo_name}
+                inputProps={{ maxLength: 60 }}
                 onChange={(e) => set('ceo_name', e.target.value)}
                 error={!!errors.ceo_name}
                 helperText={errors.ceo_name || ''}
@@ -320,6 +327,7 @@ const ApplyPage = () => {
                 size="small"
                 placeholder="010-0000-0000"
                 value={form.ceo_phone}
+                inputProps={{ maxLength: 30 }}
                 onChange={(e) => set('ceo_phone', e.target.value)}
                 error={!!errors.ceo_phone}
                 helperText={errors.ceo_phone || ''}
@@ -347,6 +355,7 @@ const ApplyPage = () => {
                 fullWidth
                 size="small"
                 value={form.manager_name}
+                inputProps={{ maxLength: 50 }}
                 onChange={(e) => set('manager_name', e.target.value)}
                 error={!!errors.manager_name}
                 helperText={errors.manager_name || ''}
@@ -360,6 +369,7 @@ const ApplyPage = () => {
                 size="small"
                 placeholder="010-0000-0000"
                 value={form.manager_phone}
+                inputProps={{ maxLength: 30 }}
                 onChange={(e) => set('manager_phone', e.target.value)}
                 error={!!errors.manager_phone}
                 helperText={errors.manager_phone || ''}
@@ -388,6 +398,7 @@ const ApplyPage = () => {
                 size="small"
                 placeholder={st('apply.phCsPhone')}
                 value={form.cs_phone}
+                inputProps={{ maxLength: 30 }}
                 onChange={(e) => set('cs_phone', e.target.value)}
               />
             </Field>
@@ -400,6 +411,7 @@ const ApplyPage = () => {
                 size="small"
                 placeholder={st('apply.phReferrer')}
                 value={form.referrer_name}
+                inputProps={{ maxLength: 60 }}
                 onChange={(e) => set('referrer_name', e.target.value)}
                 error={!!errors.referrer_name}
                 helperText={errors.referrer_name || ''}
@@ -416,6 +428,7 @@ const ApplyPage = () => {
             size="small"
             placeholder={st('apply.phSlug')}
             value={form.desired_slug}
+            inputProps={{ maxLength: 40 }}
             onChange={(e) => set('desired_slug', e.target.value.toLowerCase().trim())}
             error={!!errors.desired_slug || slugCheck === 'taken'}
             helperText={errors.desired_slug

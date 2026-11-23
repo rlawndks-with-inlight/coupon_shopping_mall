@@ -25,6 +25,7 @@ import dynamic from 'next/dynamic'
 import { ProductDetailsCarousel } from "src/views/@dashboard/e-commerce/details";
 import { SkeletonProductDetails } from "src/components/skeleton";
 import ProductOptionEditor, { 특성최대, 글자수 } from 'src/components/manager/ProductOptionEditor';
+import { 글자수표시, 칸최대 } from 'src/utils/char-limit';
 import { 금액표시, 금액입력 } from 'src/utils/money-input'
 
 // 옵션 개편분을 저장 요청에 싣는다.
@@ -1008,6 +1009,20 @@ const ProductEdit = () => {
         toast.error(`'${g.group_name}' 에 항목명이 비어 있는 줄이 있습니다. 항목명을 입력하거나 그 줄을 지워 주세요.`);
         return;
       }
+      // DB 칸 크기(옵션 이름 30자·항목명 50자) — 서버 옵션길이검사와 같은 기준(2026-11-23)
+      if (글자수(g?.group_name) > 칸최대.옵션이름) {
+        toast.error(`옵션 「${String(g.group_name).trim()}」 이름이 ${글자수(g?.group_name)}자입니다. 옵션 이름은 ${칸최대.옵션이름}자까지 넣을 수 있습니다.`);
+        return;
+      }
+      const 긴항목 = liveOptions.find((o) => 글자수(o?.option_name) > 칸최대.옵션항목);
+      if (긴항목) {
+        toast.error(`옵션 항목 「${String(긴항목.option_name).trim()}」 이름이 ${글자수(긴항목.option_name)}자입니다. 항목명은 ${칸최대.옵션항목}자까지 넣을 수 있습니다.`);
+        return;
+      }
+    }
+    if (글자수(item?.product_comment) > 칸최대.상품설명) {
+      toast.error(`상품 간단한 설명이 ${글자수(item?.product_comment)}자입니다. ${칸최대.상품설명}자까지 넣을 수 있습니다.`);
+      return;
     }
     const liveCharacters = (item?.characters ?? []).filter((c) => c?.is_delete != 1);
     for (const c of liveCharacters) {
@@ -1823,6 +1838,7 @@ const ProductEdit = () => {
                         disabled={user?.level < 40}
                         label='상품명 (필수)'
                         value={item.product_name}
+                        {...글자수표시(item.product_name, 칸최대.상품명)}
                         placeholder="예시) 블랙 럭셔리 팔찌, 팔찌 1위 상품"
                         onChange={(e) => {
                           setItem(
@@ -1862,6 +1878,7 @@ const ProductEdit = () => {
                             disabled={user?.level < 40}
                             label='상품 간단한 설명'
                             value={item.product_comment}
+                            {...글자수표시(item.product_comment, 칸최대.상품설명)}
                             placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
                             onChange={(e) => {
                               setItem(

@@ -1,5 +1,5 @@
 import { Stack, TextField } from '@mui/material';
-import { sanitizePhoneInput } from 'src/utils/function';
+import { sanitizePhoneInput, 이름최대 } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 import PasswordField from 'src/components/elements/PasswordField';
 
@@ -41,6 +41,7 @@ const GuestInquiryFields = ({ value = GUEST_INQUIRY_EMPTY, onChange, disabled = 
             <TextField
                 size="small" fullWidth label={translate('이름')} disabled={disabled}
                 value={value?.none_user_name ?? ''}
+                inputProps={{ maxLength: 이름최대 }}
                 onChange={(e) => set('none_user_name', e.target.value)}
             />
             <TextField

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { apiManager } from 'src/utils/api'
-import { isValidPhoneNumber, sanitizePhoneInput } from 'src/utils/function'
+import { isValidPhoneNumber, sanitizePhoneInput, 이름최대 } from 'src/utils/function'
 
 // ** MUI Imports
 import Button from '@mui/material/Button'
@@ -154,6 +154,7 @@ const DialogAddAddress = (props) => {
                 value={addAddressObj.receiver}
                 margin="dense"
                 label={translate('받는 사람')}
+                inputProps={{ maxLength: 이름최대 }}
                 onChange={(e) => setField('receiver', e.target.value)}
               />
               <TextField

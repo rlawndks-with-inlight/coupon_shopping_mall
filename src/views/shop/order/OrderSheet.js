@@ -23,7 +23,7 @@ import { saveRetryDraft, takeRetryDraft, saveSessionDraft, takeSessionDraft, cle
 import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList, formatLang } from 'src/utils/format';
-import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum, commarNumberWithUnit } from 'src/utils/function';
+import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum, commarNumberWithUnit, 이름최대 } from 'src/utils/function';
 import { KOREA_CODE, OVERSEAS_CODE, formatOverseasAddress, isDomestic } from 'src/data/countries';
 import Policy, { POLICY_TYPE } from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -1006,7 +1006,7 @@ export default function OrderSheet({ router }) {
             <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"
               onChange={(e) => setPayData({ ...payData, card_num: formatCreditCardNumber(e.target.value, Payment) })} />
             <TextField size="small" label={translate('카드 사용자명')} value={payData.buyer_name}
-              onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
+              inputProps={{ maxLength: 이름최대 }} onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
             <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
               onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
             <PasswordField size="small" label={translate('카드비밀번호 앞 두자리')} value={payData.card_pw} inputProps={{ maxLength: '2' }}
@@ -1084,7 +1084,7 @@ export default function OrderSheet({ router }) {
             <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"
               onChange={(e) => setPayData({ ...payData, card_num: formatCreditCardNumber(e.target.value, Payment) })} />
             <TextField size="small" label={translate('카드 사용자명')} value={payData.buyer_name}
-              onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
+              inputProps={{ maxLength: 이름최대 }} onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
             <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
               onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
             <PasswordField size="small" label={translate('카드비밀번호 앞 두자리')} value={payData.card_pw} inputProps={{ maxLength: '2' }}
@@ -1214,7 +1214,7 @@ export default function OrderSheet({ router }) {
                     <Stack spacing={2}>
                       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                         <TextField fullWidth size="small" label={translate('이름')} value={payData.buyer_name}
-                          onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
+                          inputProps={{ maxLength: 이름최대 }} onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
                         <TextField fullWidth size="small" label={translate('휴대폰')} value={payData.buyer_phone}
                           inputMode="tel" placeholder="010-1234-5678"
                           onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
@@ -1378,7 +1378,7 @@ export default function OrderSheet({ router }) {
                       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                         <TextField fullWidth size="small" label={translate('받는 사람')} value={payData.receiver || ''}
                           disabled={sameAsBuyer}
-                          onChange={(e) => setPayData({ ...payData, receiver: e.target.value })} />
+                          inputProps={{ maxLength: 이름최대 }} onChange={(e) => setPayData({ ...payData, receiver: e.target.value })} />
                         <TextField fullWidth size="small" label={translate('연락처')} value={payData.addr_phone || ''}
                           disabled={sameAsBuyer}
                           inputMode="tel" placeholder={isKR ? '010-1234-5678' : '+81 90-1234-5678'}

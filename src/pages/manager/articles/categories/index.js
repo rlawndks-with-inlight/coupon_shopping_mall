@@ -79,10 +79,10 @@ const ArticleCategoryList = () => {
       action: (row) => {
         return (
           <>
-            <IconButton>
-              <Icon icon='material-symbols:edit-outline' onClick={() => {
+            <IconButton onClick={() => {
                 router.push(`categories/edit/${row?.id}`)
-              }} />
+              }}>
+              <Icon icon='material-symbols:edit-outline' />
             </IconButton>
             <IconButton onClick={() => {
               setModal({

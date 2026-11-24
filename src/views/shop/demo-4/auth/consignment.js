@@ -64,7 +64,7 @@ const ConsignmentDemo = (props) => {
               sx={{ margin: 'auto' }}
               size={window.innerWidth > 700 ? 'medium' : 'small'}
               count={makeMaxPage(consignmentContent?.total, consignmentContent?.page_size)}
-              page={consignmentContent?.page}
+              page={Number(consignmentContent?.page) || 1}
               variant='outlined' shape='rounded'
               color='primary'
               siblingCount={4}

@@ -78,10 +78,10 @@ const FaqList = () => {
       action: (row) => {
         return (
           <>
-            <IconButton>
-              <Icon icon='material-symbols:edit-outline' onClick={() => {
+            <IconButton onClick={() => {
                 router.push(`/manager/articles/${router.query.category_id}/edit/${row?.id}`)
-              }} />
+              }}>
+              <Icon icon='material-symbols:edit-outline' />
             </IconButton>
             <IconButton onClick={() => {
               setModal({

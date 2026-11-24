@@ -58,7 +58,7 @@ const HistoryDemo = (props) => {
           sx={{ margin: 'auto' }}
           size={window.innerWidth > 700 ? 'medium' : 'small'}
           count={makeMaxPage(historyContent?.total, historyContent?.page_size)}
-          page={historyContent?.page}
+          page={Number(historyContent?.page) || 1}
           variant='outlined' shape='rounded'
           color='primary'
           onChange={(_, num) => {

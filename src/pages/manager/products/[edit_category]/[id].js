@@ -576,11 +576,11 @@ const ProductEdit = () => {
       action: (row) => {
         return (
           <>
-            <IconButton>
-              <Icon icon='material-symbols:edit-outline' onClick={() => {
+            <IconButton onClick={() => {
                 setReview(row);
                 setReviewAction(true);
-              }} />
+              }}>
+              <Icon icon='material-symbols:edit-outline' />
             </IconButton>
             <IconButton onClick={() => {
               setModal({

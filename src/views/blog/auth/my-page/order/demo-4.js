@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab, Button } from '@mui/material';
+import { Tabs, Tab, Button, Pagination } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
@@ -74,6 +74,10 @@ const Demo4 = (props) => {
     const [orderList, setOrderList] = useState([]);
     // 최초 렌더에서 목록이 [] 이라 "주문 내역이 없습니다" 가 깜빡이는 걸 막기 위한 로딩 플래그
     const [loading, setLoading] = useState(true);
+    // 주문은 20건씩 쪽으로 나눠 받는다. 예전엔 첫 20건만 받고 쪽 단추가 없어 그보다 앞 주문을 볼 수 없었다(2026-11-24).
+    const 주문쪽크기 = 20;
+    const [쪽, set쪽] = useState(1);
+    const [전체, set전체] = useState(0);
     // 줄마다 「후기 쓰기」 — 쓸 수 있는지는 서버가 판정한 것을 한 번 받아 둔다.
     const { byOrder: reviewLines, refresh: refreshReviewLines } = useReviewWritable();
 
@@ -82,10 +86,12 @@ const Demo4 = (props) => {
     }, [])
 
     // 로그인 회원의 실 주문목록을 불러와 주문상품 단위로 펼쳐 렌더한다.
-    const getOrderList = async () => {
+    const getOrderList = async (보낼쪽) => {
+        const 이번쪽 = Number(보낼쪽) || 쪽; // 인자 없이 부르면(취소 뒤 다시 읽기) 지금 쪽
         try {
-            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20, type: 'user' }); // 내 주문만 + 취소 건 포함, 실패 건 제외
+            let data = await apiManager('transactions', 'list', { page: 이번쪽, page_size: 주문쪽크기, type: 'user' }); // 내 주문만 + 취소 건 포함, 실패 건 제외
             let content = data?.content ?? [];
+            if (data) { set전체(Number(data?.total) || 0); set쪽(이번쪽); }
             let items = [];
             content.forEach((trx) => {
                 (trx?.orders || []).forEach((order) => {
@@ -203,6 +209,13 @@ const Demo4 = (props) => {
                             }
                         </>
                     ))}
+                    {전체 > 주문쪽크기 &&
+                        <Pagination
+                            sx={{ display: 'flex', justifyContent: 'center', my: 4 }}
+                            count={Math.ceil(전체 / 주문쪽크기)}
+                            page={쪽}
+                            variant='outlined' shape='rounded' color='primary'
+                            onChange={(_, n) => { getOrderList(n); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />}
                 </ContentContainer>
             </Wrappers>
         </>

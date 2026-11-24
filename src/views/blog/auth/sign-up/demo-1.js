@@ -188,33 +188,33 @@ const Demo1 = (props) => {
                     <FormControlLabel label={<Typography>{translate('서비스 이용약관')}<span style={{ color: 'red' }}>{translate('(필수)')}</span></Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
                       setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
                     }} />} />
-                    <IconButton style={{ width: '24px', height: '40px', padding: '0' }}>
-                      <Icon icon='ep:arrow-right' color='black' onClick={() => {
+                    <IconButton style={{ width: '24px', height: '40px', padding: '0' }} onClick={() => {
                         setOpenPolicy(true)
                         setPolicyType(0)
-                      }} />
+                      }}>
+                      <Icon icon='ep:arrow-right' color='black' />
                     </IconButton>
                   </DetailedCheckbox>
                   <DetailedCheckbox>
                     <FormControlLabel label={<Typography>{translate('개인정보 수집 이용 동의')}<span style={{ color: 'red' }}>{translate('(필수)')}</span></Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
                       setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked })
                     }} />} />
-                    <IconButton style={{ width: '24px', height: '40px', padding: '0' }} >
-                      <Icon icon='ep:arrow-right' color='black' onClick={() => {
+                    <IconButton style={{ width: '24px', height: '40px', padding: '0' }} onClick={() => {
                         setOpenPolicy(true)
                         setPolicyType(1)
-                      }} />
+                      }}>
+                      <Icon icon='ep:arrow-right' color='black' />
                     </IconButton>
                   </DetailedCheckbox>
                   <DetailedCheckbox>
                     <FormControlLabel label={<Typography>{translate('마케팅 정보 수신 동의')}<span style={{ color: 'gray' }}>{translate('(선택)')}</span></Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
                       setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
                     }} />} />
-                    <IconButton style={{ width: '24px', height: '40px', padding: '0' }} >
-                      <Icon icon='ep:arrow-right' color='black' onClick={() => {
+                    <IconButton style={{ width: '24px', height: '40px', padding: '0' }} onClick={() => {
                         setOpenPolicy(true)
                         setPolicyType(2)
-                      }} />
+                      }}>
+                      <Icon icon='ep:arrow-right' color='black' />
                     </IconButton>
                   </DetailedCheckbox>
                 </ChildCheckboxes>

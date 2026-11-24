@@ -55,10 +55,10 @@ const ProductPropertyGroupList = () => {
       action: (row) => {
         return (
           <>
-            <IconButton>
-              <Icon icon='material-symbols:edit-outline' onClick={() => {
+            <IconButton onClick={() => {
                 router.push(`/manager/products/property-groups/edit/${row?.id}`)
-              }} />
+              }}>
+              <Icon icon='material-symbols:edit-outline' />
             </IconButton>
             <IconButton onClick={() => {
               setModal({

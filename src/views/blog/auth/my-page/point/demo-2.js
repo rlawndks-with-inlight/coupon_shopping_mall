@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
 import { useState, useEffect } from 'react';
+import { Pagination } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { apiManager } from 'src/utils/api';
@@ -50,14 +51,20 @@ const Demo2 = (props) => {
     const { themeMode } = useSettingsContext();
     const { user } = useAuthContext();
     const [pointList, setPointList] = useState([])
+    // 포인트 내역은 20건씩 쪽으로 나눠 받는다. 예전엔 첫 20건만 받고 쪽 단추가 없어 그보다 앞 내역을 볼 수 없었다(2026-11-24).
+    const 쪽크기 = 20;
+    const [쪽, set쪽] = useState(1);
+    const [전체, set전체] = useState(0);
 
     useEffect(() => {
         getPointList();
     }, [])
 
     // 실 포인트내역 로드 → data.content(날짜/증감/비고) 렌더
-    const getPointList = async () => {
-        let data = await apiManager('points', 'list', { page: 1, page_size: 20 });
+    const getPointList = async (보낼쪽) => {
+        const 이번쪽 = Number(보낼쪽) || 1;
+        let data = await apiManager('points', 'list', { page: 이번쪽, page_size: 쪽크기 });
+        if (data) { set전체(Number(data?.total) || 0); set쪽(이번쪽); }
         setPointList(data?.content ?? []);
     }
 
@@ -90,6 +97,13 @@ const Demo2 = (props) => {
                     {pointList.length == 0 &&
                         <div style={{ padding: '2rem', textAlign: 'center', opacity: 0.7 }}>{translate('포인트 내역이 없습니다.')}</div>
                     }
+                    {전체 > 쪽크기 &&
+                        <Pagination
+                            sx={{ display: 'flex', justifyContent: 'center', my: 4 }}
+                            count={Math.ceil(전체 / 쪽크기)}
+                            page={쪽}
+                            variant='outlined' shape='rounded' color='primary'
+                            onChange={(_, n) => { getPointList(n); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />}
                 </ContentContainer>
             </Wrappers>
         </>

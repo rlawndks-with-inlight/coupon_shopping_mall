@@ -380,10 +380,10 @@ const ProductList = () => {
         action: (row) => {
           return (
             <>
-              <IconButton>
-                <Icon icon='material-symbols:edit-outline' onClick={() => {
+              <IconButton onClick={() => {
                   router.push(`edit/${row?.id}`)
-                }} />
+                }}>
+                <Icon icon='material-symbols:edit-outline' />
               </IconButton>
               {/*<IconButton>
                 <Icon icon='material-symbols:content-copy-outline' onClick={() => {
@@ -414,8 +414,7 @@ const ProductList = () => {
               {
                 row['seller_id'] > 0 ?
                   <>
-                    <IconButton>
-                      <Icon icon='material-symbols:content-copy-outline' onClick={() => {
+                    <IconButton onClick={() => {
                         const agentPrice = calcAgentPrice(row?.product_sale_price, user);
                         setProductPrice(row?.seller_price ?? agentPrice);
                         setPopup({
@@ -424,7 +423,8 @@ const ProductList = () => {
                           seller_product_id: row?.seller_product_id,
                           seller_price: agentPrice
                         });
-                      }} />
+                      }}>
+                      <Icon icon='material-symbols:content-copy-outline' />
                     </IconButton>
                     <IconButton onClick={() => {
                       setModal({
@@ -438,8 +438,7 @@ const ProductList = () => {
                   </>
                   :
                   <>
-                    <IconButton>
-                      <Icon icon='material-symbols:content-copy-outline' onClick={() => {
+                    <IconButton onClick={() => {
                         const agentPrice = calcAgentPrice(row?.product_sale_price, user);
                         setProductPrice(agentPrice);
                         setPopup({
@@ -448,7 +447,8 @@ const ProductList = () => {
                           id: row?.id,
                           seller_price: agentPrice
                         });
-                      }} />
+                      }}>
+                      <Icon icon='material-symbols:content-copy-outline' />
                     </IconButton>
                   </>
               }

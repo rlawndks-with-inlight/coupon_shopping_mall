@@ -223,7 +223,7 @@ const MyPageDemo3 = (props) => {
                   sx={{ margin: 'auto' }}
                   size={isWide ? 'medium' : 'small'}
                   count={makeMaxPage(addressContent?.total, addressContent?.page_size)}
-                  page={addressContent?.page}
+                  page={Number(addressContent?.page) || 1}
                   variant='outlined' shape='rounded'
                   color='primary'
                   onChange={(_, num) => {

@@ -531,10 +531,10 @@ const TrxList = () => {
                   router.push(`default/${row?.id}`)
                 }} />
               </IconButton> */}
-              <IconButton>
-                <Icon icon='material-symbols:edit-outline' onClick={() => {
+              <IconButton onClick={() => {
                   router.push(`/manager/orders/edit/${row?.id}`)
-                }} />
+                }}>
+                <Icon icon='material-symbols:edit-outline' />
               </IconButton>
               <IconButton onClick={() => {
                 setModal({

@@ -117,16 +117,15 @@ const BrandList = () => {
           action: row => {
             return (
               <>
-                <IconButton>
-                  <Icon
-                    icon='bi:copy'
-                    onClick={() => {
+                <IconButton onClick={() => {
                       setCopyObj({
                         sender_brand_id: row?.id,
                         sender_brand: row
                       })
                       setCopyOpen(true)
-                    }}
+                    }}>
+                  <Icon
+                    icon='bi:copy'
                   />
                 </IconButton>
               </>
@@ -145,10 +144,7 @@ const BrandList = () => {
               <>
                 <IconButton
                   disabled={row?.is_linux_setting_confirm == 1 || process.env.NODE_ENV == 'development'}
-                >
-                  <Icon
-                    icon='uil:setting'
-                    onClick={() => {
+                onClick={() => {
                       setModal({
                         func: () => {
                           settingSslBrand(row)
@@ -156,7 +152,9 @@ const BrandList = () => {
                         icon: 'uil:setting',
                         title: '리눅스 세팅 하시겠습니까?'
                       })
-                    }}
+                    }}>
+                  <Icon
+                    icon='uil:setting'
                   />
                 </IconButton >
               </>
@@ -182,12 +180,11 @@ const BrandList = () => {
             return (
               <>
                 <IconButton
-                >
+                onClick={() => {
+                      window.open(`https://${row?.dns}/sitemap.xml`) // 사이트맵은 호스트마다 /sitemap.xml 하나다(sitemap-ID.xml 은 없는 주소)
+                    }}>
                   <Icon
                     icon='cil:sitemap'
-                    onClick={() => {
-                      window.open(`https://${row?.dns}/sitemap.xml`) // 사이트맵은 호스트마다 /sitemap.xml 하나다(sitemap-ID.xml 은 없는 주소)
-                    }}
                   />
                 </IconButton >
               </>
@@ -224,12 +221,11 @@ const BrandList = () => {
       action: row => {
         return (
           <>
-            <IconButton>
+            <IconButton onClick={() => {
+                  window.location.href = `/manager/settings/default/${row?.id}`;
+                }}>
               <Icon
                 icon='material-symbols:edit-outline'
-                onClick={() => {
-                  window.location.href = `/manager/settings/default/${row?.id}`;
-                }}
               />
             </IconButton>
             {user?.level >= 50 && (

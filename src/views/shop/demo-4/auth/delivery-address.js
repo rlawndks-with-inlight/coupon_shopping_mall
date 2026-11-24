@@ -115,7 +115,7 @@ const DeliveryAddressDemo = (props) => {
                             sx={{ margin: 'auto' }}
                             size={window.innerWidth > 700 ? 'medium' : 'small'}
                             count={makeMaxPage(addressContent?.total, addressContent?.page_size)}
-                            page={addressContent?.page}
+                            page={Number(addressContent?.page) || 1}
                             variant='outlined' shape='rounded'
                             color='primary'
                             siblingCount={4}

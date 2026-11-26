@@ -94,10 +94,14 @@ export const 제목 = (hd, asPath, 메인사이트) => {
   return 공백정리(hd?.name);
 };
 
+// 상품 소개 글 — 한 줄 소개, 비었으면 상세 설명의 글자(백엔드 detail_text, 2026-11-27).
+//   포스몰 상품 9개 중 7개가 한 줄 소개를 비워 둬 구글이 「description 누락」을 알렸다.
+const 상품소개 = (p) => 공백정리(p?.comment) || 공백정리(p?.detail_text);
+
 export const 설명문 = (hd) => {
   const p = hd?.ssr_content?.product;
   if (p?.name) {
-    const 소개 = 공백정리(p.comment);
+    const 소개 = 상품소개(p);
     const 가격 = Number(p.price) > 0 ? `판매가 ${천단위(p.price)}원` : '';
     return [소개 || 공백정리(p.name), 가격, 공백정리(p.shop_name)].filter(Boolean).join(' | ').slice(0, 160);
   }
@@ -124,7 +128,8 @@ export const 구조화데이터 = (hd, 주소, asPath) => {
   if (p?.name && 주소) {
     const 상품 = { '@context': 'https://schema.org', '@type': 'Product', name: 공백정리(p.name), url: 주소 };
     if (p.img) 상품.image = [String(p.img)];
-    if (공백정리(p.comment)) 상품.description = 공백정리(p.comment);
+    // 설명은 늘 넣는다 — 소개 글이 없으면 상품명·판매가·몰 이름(<meta description> 과 같은 글)
+    상품.description = 상품소개(p) || 설명문(hd);
     if (Number(p.price) > 0) {
       상품.offers = {
         '@type': 'Offer',

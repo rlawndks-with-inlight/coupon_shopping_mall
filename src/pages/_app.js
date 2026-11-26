@@ -319,6 +319,10 @@ App.getInitialProps = async context => {
       // 없는 상품 주소(지움·숨김) — 화면은 그대로(「상품을 찾을 수 없음」) 두고 응답 코드만 404 로 한다.
       // 200 이면 구글이 soft 404 로 잡는다. 판정은 백엔드가 상세 API 와 같은 조건으로 한다(domain.controller).
       if (dns_data?.ssr_content?.product_missing && ctx?.res) ctx.res.statusCode = 404;
+      // 상품 번호 자리가 숫자가 아닌 주소(/shop/item/[id]/ 등)도 없는 상품이다 — 404.
+      //   구글이 Next.js 페이지 목록에서 주소 모양(/shop/item/[id])을 읽어 가 200 으로 받았고, 몰 이름·소개만 나와
+      //   첫 화면과 같은 내용이라 「중복 페이지」로 잡혔다(2026-11-27 서치콘솔).
+      if (route_list[1] == 'shop' && route_list[2] == 'item' && route_list[3] && !/^\d+$/.test(route_list[3]) && ctx?.res) ctx.res.statusCode = 404;
       // 데모 미리보기(demo-N.*)에서는 실제 가맹점의 민감 사업자/개인정보를 '데모N'으로 가린다.
       // (서버 렌더 단계에서 치환해 __NEXT_DATA__로도 실제 값이 노출되지 않게 함)
       return {

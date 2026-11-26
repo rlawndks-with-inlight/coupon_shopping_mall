@@ -55,6 +55,25 @@ t('가격 0 이면 offers 없음', !s.구조화데이터({ ssr_content: { produc
 eq('몰 첫 화면 = Organization', s.구조화데이터(몰, 'https://a.kr/', '/')?.['@type'], 'Organization');
 eq('그 밖의 화면은 없음', s.구조화데이터(몰, 'https://a.kr/shop/items/', '/shop/items/'), null);
 t('</script> 로 닫히지 않음', !s.구조화데이터문자열({ name: '</script><b>' }).includes('<'));
+// 구글 「description 누락」(2026-11-27) — 상품 구조화 데이터에 설명이 늘 있다
+eq('설명: 한 줄 소개가 비면 상세 설명 글자', s.구조화데이터({ ssr_content: { product: { name: 'a', comment: ' ', detail_text: '상세 글', price: 1 } } }, 'https://a/', '/')?.description, '상세 글');
+eq('설명: 둘 다 비면 상품명·판매가·몰(메타 설명과 같음)', p?.description, '광어회 | 판매가 12,000원 | mbc02');
+eq('설명: 한 줄 소개가 먼저', s.구조화데이터({ ssr_content: { product: { name: 'a', comment: '소개', detail_text: '상세', price: 1 } } }, 'https://a/', '/')?.description, '소개');
+eq('메타 설명도 상세 설명 글자로 채운다', s.설명문({ ssr_content: { product: { name: 'A', comment: '', detail_text: '상세 글', price: 1000, shop_name: 'B' } } }), '상세 글 | 판매가 1,000원 | B');
+{
+  const app = 읽기(FRONT_ROOT, 'src/pages/_app.js');
+  t('상품 번호가 숫자가 아닌 주소(/shop/item/[id]/)는 404(구글 「중복 페이지」, 2026-11-27)',
+    /route_list\[2\] == 'item' && route_list\[3\] && !\/\^\\d\+\$\/\.test\(route_list\[3\]\) && ctx\?\.res\) ctx\.res\.statusCode = 404/.test(app));
+}
+if (백엔드있음) {
+  // 컨트롤러를 import 하면 DB 연결을 만든다 — 함수만 잘라 돌린다
+  const dcs = 읽기(BACK_ROOT, 'controllers/domain.controller.js');
+  t('백: 상품 조회에 상세 설명, 앞 300자 글자만 detail_text', /product_description, product_price/.test(dcs) && /detail_text: 글만\(product\.product_description\)\.slice\(0, 300\)/.test(dcs));
+  const 글만소스 = dcs.slice(dcs.indexOf('export const 글만'), dcs.indexOf('// seo_obj 는 문자열'));
+  const 글만f = new Function(글만소스.replace('export const 글만', 'const 글만') + '\nreturn 글만;')();
+  eq('백: 글만 — 태그·스크립트·문자 참조', 글만f('<p>꽃게&nbsp;탕</p><script>x()</script><img src="a.jpg"><br>살 &amp; 국물'), '꽃게 탕 살 & 국물');
+  eq('백: 글만 — 그림뿐이면 빈 값', 글만f('<p><img src="a.jpg"></p>'), '');
+}
 
 // ④
 t('로그인 noindex', s.색인제외('/shop/auth/login'));
